@@ -13,7 +13,8 @@ After upgrading to OS X 10.8 Mountain Lion the processes section was not working
 Here is a small instruction to make processes be displayed again.
 
 1. Open iStat Pro widget directory, it is located in `~/Library/Widgets/iStat\ Pro.wdgt/`
-or `/Library/Widgets/iStat\ Pro.wdgt/`;
+or `/Library/Widgets/iStat\ Pro.wdgt/` (in Finder you should use `Show Package Contents` in context menu
+of the specified folder to open the widget's contents);
 
 2. If you are using horizontal (wide) widget edit the `Wide.js` file and if 
 vertical (tall) - `Tall.js`;
