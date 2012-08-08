@@ -4,7 +4,7 @@
   <title><![CDATA[Frostman's blog]]></title>
   <link href="http://slukjanov.name/atom.xml" rel="self"/>
   <link href="http://slukjanov.name/"/>
-  <updated>2012-08-08T20:45:44+04:00</updated>
+  <updated>2012-08-09T00:11:57+04:00</updated>
   <id>http://slukjanov.name/</id>
   <author>
     <name><![CDATA[Sergey Lukjanov]]></name>
@@ -26,7 +26,8 @@ After upgrading to OS X 10.8 Mountain Lion the processes section was not working
 
 <ol>
 <li><p>Open iStat Pro widget directory, it is located in <code>~/Library/Widgets/iStat\ Pro.wdgt/</code>
-or <code>/Library/Widgets/iStat\ Pro.wdgt/</code>;</p></li>
+or <code>/Library/Widgets/iStat\ Pro.wdgt/</code> (in Finder you should use <code>Show Package Contents</code> in context menu
+of the specified folder to open the widget&#8217;s contents);</p></li>
 <li><p>If you are using horizontal (wide) widget edit the <code>Wide.js</code> file and if
 vertical (tall) - <code>Tall.js</code>;</p></li>
 <li><p>Find function <code>WideSkinController.prototype.updateProcesses = function(){</code> and
