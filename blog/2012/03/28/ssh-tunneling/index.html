@@ -1,0 +1,394 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>SSH Tunneling - Frostman's blog</title>
+  <meta name="author" content="Sergey Lukjanov">
+
+  
+  <meta name="description" content="I create SSH tunnels every day and this article is a small introduction into the SSH tunneling
+(also known as &#8220;port forwarding&#8221;).
+A &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://slukjanov.name/blog/2012/03/28/ssh-tunneling/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="http://feeds.feedburner.com/slukjanov" rel="alternate" title="Frostman's blog" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet"
+      type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet"
+      type="text/css">
+
+<script src="/assets/jquery-1.7.2.min.js" type="text/javascript"></script>
+<script type="text/javascript">
+    var $j = jQuery.noConflict();
+</script>
+<link href="/assets/fancybox/jquery.fancybox.css?v=2.0.5" media="screen" rel="stylesheet" type="text/css">
+<script src="/assets/fancybox/jquery.fancybox.pack.js?v=2.0.5" type="text/javascript"></script>
+<script type="text/javascript">
+    if (!/android|iphone|ipod|ipad/i.test(navigator.userAgent)) {
+        $j(document).ready(function () {
+            $j('a[href$=".png"],a[href$=".jpg"],a[href$=".jpeg"],a[href$=".gif"]')
+                    .fancybox({
+                        closeClick:'true',
+                        openEffect:'elastic',
+                        closeEffect:'elastic'
+                    })
+        });
+    }
+</script>
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-25396023-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Frostman's blog</a></h1>
+  
+    <h2>Blog about programming and techs</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss email">
+  <li><a href="http://feeds.feedburner.com/slukjanov" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+    <li><a href="http://feedburner.google.com/fb/a/mailverify?uri=slukjanov" rel="subscribe-email" title="subscribe via email">Email</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:slukjanov.name" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/about">About me</a></li>
+  <li><a href="https://github.com/Frostman">Github</a></li>
+  <li><a href="https://twitter.com/lukjanovsv">Twitter</a></li>
+  <li><a href="mailto:blog@slukjanov.name">Mail</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">SSH Tunneling</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-03-28T09:01:00+04:00" pubdate data-updated="true">Mar 28<span>th</span>, 2012</time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>I create SSH tunnels every day and this article is a small introduction into the SSH tunneling
+(also known as &#8220;port forwarding&#8221;).
+A secure shell (SSH) tunnel consists of an encrypted tunnel created through a SSH protocol connection.
+Users may set up SSH tunnels to transfer unencrypted traffic over a network through an encrypted channel.
+SSH is typically used to log into a remote machine and execute commands, but it also supports tunneling,
+forwarding TCP ports and X11 connections; it can transfer files using the associated SSH file transfer (SFTP)
+or secure copy (SCP) protocols. Also tunnels provide an ability to bypass firewalls :)</p>
+
+<p>So, let&#8217;s start. Ports can be forwarded in three ways:</p>
+
+<ol>
+<li>Local port forwarding;</li>
+<li>Remote port forwarding;</li>
+<li>Dynamic port forwarding (proxy).</li>
+</ol>
+
+
+<p>Wikipedia says that:</p>
+
+<pre><code>Port forwarding or port mapping is a name given to the combined technique of
+* translating the address and/or port number of a packet to a new destination
+* possibly accepting such packet(s) in a packet filter (firewall)
+* forwarding the packet according to the routing table.
+</code></pre>
+
+<h2>Tunneling with local port forwarding</h2>
+
+<p>Let&#8217;s imagine that there are some computers with specific abilities:</p>
+
+<ul>
+<li><code>work</code> - can&#8217;t access <code>target</code> (for example, <code>target</code> is blocked by firewall or <code>target</code> can be
+unaccessible from the <code>work</code>&#8217;s network)</li>
+<li><code>bridge</code> (<code>gateway</code>) - accessible from <code>work</code> and can access <code>target</code> (need to have IP accessible from <code>work</code>)</li>
+</ul>
+
+
+<p>So, we want to access <code>target</code> throw the <code>global</code> machine.</p>
+
+<p><code>Access from work computer to some external banned resource</code></p>
+
+<p>To create the SSH tunnel you should execute the following command from <code>work</code> (<code>local</code>) machine:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>ssh -L [&lt;local-address-to-listen>:]&lt;local-port-to-listen>:&lt;target-host>:&lt;target-port> &lt;bridge></span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now the SSH client at <code>work</code> will connect to the SSHd running at <code>bridge</code> and bind <code>&lt;target-host&gt;:&lt;target-port&gt;</code>
+to listen for local requests to <code>[&lt;local-address-to-listen&gt;:]&lt;local-port-to-listen&gt;</code>. At the <code>bridge</code>
+end the connection to <code>&lt;target-host&gt;:&lt;target-port&gt;</code> will be created. So <code>work</code> doesn’t need to know how to connect to
+<code>&lt;target-host&gt;:&lt;target-port&gt;</code>, only <code>bridge</code> needs to worry about that. The channel between <code>work</code> and <code>bridge</code> will be
+<strong>encrypted</strong> (SSH tunnel), but the connection between <code>bridge</code> and <code>&lt;target-host&gt;:&lt;target-port&gt;</code> will be <strong>unencrypted</strong>.</p>
+
+<p>After executing this command, it is possible to access <code>&lt;target-host&gt;:&lt;target-port&gt;</code> by accessing
+<code>[&lt;local-address-to-listen&gt;:]&lt;local-port-to-listen&gt;</code> at <code>work</code> computer. The <code>bridge</code> computer will act as a gateway
+which would accept requests from <code>work</code> machine and fetch data/tunnelling it back.</p>
+
+<h2>Tunneling with remote port forwarding  (reversed tunneling)</h2>
+
+<p>Let&#8217;s reverse the problem.</p>
+
+<ul>
+<li><code>home</code> - can&#8217;t access <code>target</code> (for example, <code>target</code> is protected by firewall or <code>target</code> can be unacessible from the
+<code>home</code>&#8217;s network)</li>
+<li><code>bridge</code> (<code>gateway</code> or <code>work</code>) - accessible from <code>home</code> and can access <code>target</code> (need to have IP accessible from <code>home</code>)</li>
+</ul>
+
+
+<p>To create the SSH tunnel you should execute the following command from <code>bridge</code> (<code>gateway</code>/<code>work</code>) machine:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>ssh -R [&lt;home-address-to-listen>:]&lt;home-port-to-listen>:&lt;target-host>:&lt;target-port> &lt;home></span></code></pre></td></tr></table></div></figure>
+
+
+<p>After executing of this command, the SSH client at <code>bridge</code> will connect to SSHd running at <code>home</code> and create the tunnel.
+Then the server will bind <code>[&lt;home-address-to-listen&gt;:]&lt;home-port-to-listen&gt;</code> to listen for incoming requests which would
+be routed through the created SSH tunnel between <code>home</code> and <code>gateway</code>. Now it’s possible to access the &#8220;internal&#8221;
+resource <code>&lt;target-host&gt;:&lt;target-port&gt;</code> by accessing <code>[&lt;home-address-to-listen&gt;:]&lt;home-port-to-listen&gt;</code> from the <code>home</code>
+machine. The <code>gateway</code> will then create a connection to <code>&lt;target-host&gt;:&lt;target-port&gt;</code> and relay back the response to
+<code>home</code> via the created SSH tunnel.</p>
+
+<p>With this approach we need to create the splitted SSH tunnel for each new resource. But SSH provides us an ability to
+proxy traffic to any resource using SSH tunnel and it named <code>dynamic port forwarding</code>.</p>
+
+<h2>Dynamic port forwarding (proxy)</h2>
+
+<p>Dynamic port forwarding provides us an ability to configure one local port for tunnelling data to all remote destinations
+using the SOCKS protocol. At the client side of the SSH tunnel a SOCKS proxy would be created and any application that can
+work throw SOCKS protocol can use it to access some resources that accessible only from the other host.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>ssh -D [&lt;local-address-to-listen>:]&lt;local-port-to-listen> &lt;gateway></span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Additional SSH flags</h2>
+
+<p>There are several intresting <code>ssh</code> command flags:</p>
+
+<ul>
+<li><code>-v</code> - verbose output</li>
+<li><code>-q</code> - quiet mode</li>
+<li><code>-1</code> - forces ssh to try protocol version 1 only</li>
+<li><code>-2</code> - forces ssh to try protocol version 2 only</li>
+<li><code>-4</code> - forces ssh to use IPv4 addresses only</li>
+<li><code>-6</code> - forces ssh to use IPv6 addresses only</li>
+</ul>
+
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Sergey Lukjanov</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-03-28T09:01:00+04:00" pubdate data-updated="true">Mar 28<span>th</span>, 2012</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/port-forwarding/'>Port forwarding</a>, <a class='category' href='/blog/categories/ssh/'>Ssh</a>, <a class='category' href='/blog/categories/tips/'>Tips</a>, <a class='category' href='/blog/categories/tunneling/'>Tunneling</a>, <a class='category' href='/blog/categories/nix/'>nix</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://slukjanov.name/blog/2012/03/28/ssh-tunneling/" data-via="" data-counturl="http://slukjanov.name/blog/2012/03/28/ssh-tunneling/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2012/02/07/shell-improvements-with-zsh/" title="Previous Post: Shell improvements with Zsh">&laquo; Shell improvements with Zsh</a>
+      
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>About Me</h1>
+  <p>
+	My name is Sergey Lukjanov.
+	I am software engineer from Russia.
+	I am interesting in Java, Kotlin, Scala, Groovy, JavaScript, NIO, Concurrency and many other langs/tools/libs.
+  </p>
+</section>
+
+<section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2012/03/28/ssh-tunneling/">SSH Tunneling</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/02/07/shell-improvements-with-zsh/">Shell improvements with Zsh</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2011/09/29/html5-slides/">HTML5 Slides</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2011/09/29/lock-and-reentrantlock/">Lock and ReentrantLock</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2011/09/28/synchronized-in-java/">Synchronized in Java</a>
+      </li>
+    
+  </ul>
+</section>
+<section>
+<h1>QR-Code<abbr title="The word 'QR Code' is a registered trademark of DENSO WAVE INCORPORATED. It applies only for the word 'QR Code', not for image.">&trade;</abbr></h1>
+<a href="http://slukjanov.name/blog/2012/03/28/ssh-tunneling/"><img src="http://chart.apis.google.com/chart?chs=150x150&cht=qr&chld=|0&chco=165B94&chl=http://slukjanov.name/blog/2012/03/28/ssh-tunneling/" alt="post-qrcode"></a></section>
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2012 - Sergey Lukjanov -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'slukjanov';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://slukjanov.name/blog/2012/03/28/ssh-tunneling/';
+        var disqus_url = 'http://slukjanov.name/blog/2012/03/28/ssh-tunneling/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: welcome | Frostman's blog]]></title>
+  <link href="http://slukjanov.name/blog/categories/welcome/atom.xml" rel="self"/>
+  <link href="http://slukjanov.name/"/>
+  <updated>2012-08-08T19:39:13+04:00</updated>
+  <id>http://slukjanov.name/</id>
+  <author>
+    <name><![CDATA[Sergey Lukjanov]]></name>
+    <email><![CDATA[blog@slukjanov.name]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[First Post]]></title>
+    <link href="http://slukjanov.name/blog/2011/09/27/first-post/"/>
+    <updated>2011-09-27T18:48:00+04:00</updated>
+    <id>http://slukjanov.name/blog/2011/09/27/first-post</id>
+    <content type="html"><![CDATA[<p>Welcome!</p>
+
+<p>It is the first post in my personal blog. I have planned to write some articles about programming and technologies in it. I think that most of them will be written in english.</p>
+
+<p>This blog is based on <a href="http://octopress.org">Octopress</a> blogging framework and hosted at Github pages.</p>
+
+<p>You can subscribe to this blog via <a href="http://feeds.feedburner.com/slukjanov">rss</a> or <a href="http://feedburner.google.com/fb/a/mailverify?uri=slukjanov">email</a>.</p>
+
+<p>There are some examples of embedding code into the article below:</p>
+
+<h3>Embedding gist:</h3>
+
+<p><div><script src='https://gist.github.com/1245365.js?file='></script>
+<noscript><pre><code>alert(&quot;test&quot;)</code></pre></noscript></div>
+</p>
+
+<h3>Embedding inline code with pygments:</h3>
+
+<p><code>js Discover the power of alert http://slukjanov.name blog
+alert("test")
+</code></p>
+
+<h3>Embedding code from a file:</h3>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>title (test.js)</span> <a href='/downloads/code/test.js'>download</a></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">alert</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<h3>Embedding inline code with the codeblock tag:</h3>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>title </span><a href='http://slukjanov.name'>blog </a></figcaption> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">alert</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+]]></content>
+  </entry>
+  
+</feed>

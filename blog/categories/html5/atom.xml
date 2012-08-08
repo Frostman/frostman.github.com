@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: HTML5 | Frostman's blog]]></title>
+  <link href="http://slukjanov.name/blog/categories/html5/atom.xml" rel="self"/>
+  <link href="http://slukjanov.name/"/>
+  <updated>2012-08-08T19:39:13+04:00</updated>
+  <id>http://slukjanov.name/</id>
+  <author>
+    <name><![CDATA[Sergey Lukjanov]]></name>
+    <email><![CDATA[blog@slukjanov.name]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[HTML5 Slides]]></title>
+    <link href="http://slukjanov.name/blog/2011/09/29/html5-slides/"/>
+    <updated>2011-09-29T13:19:00+04:00</updated>
+    <id>http://slukjanov.name/blog/2011/09/29/html5-slides</id>
+    <content type="html"><![CDATA[<p>Few days ago I encountered a problem with making presentation for techtalk. I didn't want to use Microsoft PowerPoint
+or presentations in Google Docs, because I want to publish slides in my blog. So, it had to be an html5
+application and also it had to be ready to be used in browser with projector.</p>
+
+<p>I found some interesting tool to do it. Enjoy it: <a href="https://github.com/n1k0/landslide">LandSlide</a>.</p>
+
+<p>The sample presentation with features overview you can find <a href="http://adamzap.com/random/landslide.html#slide1">here</a>.
+Use <strong>&larr;</strong> and <strong>&rarr;</strong> to browse slides.</p>
+]]></content>
+  </entry>
+  
+</feed>

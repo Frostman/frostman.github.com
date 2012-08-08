@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Shell | Frostman's blog]]></title>
+  <link href="http://slukjanov.name/blog/categories/shell/atom.xml" rel="self"/>
+  <link href="http://slukjanov.name/"/>
+  <updated>2012-08-08T19:39:13+04:00</updated>
+  <id>http://slukjanov.name/</id>
+  <author>
+    <name><![CDATA[Sergey Lukjanov]]></name>
+    <email><![CDATA[blog@slukjanov.name]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Shell improvements with Zsh]]></title>
+    <link href="http://slukjanov.name/blog/2012/02/07/shell-improvements-with-zsh/"/>
+    <updated>2012-02-07T00:20:00+04:00</updated>
+    <id>http://slukjanov.name/blog/2012/02/07/shell-improvements-with-zsh</id>
+    <content type="html"><![CDATA[<p>First of all, I want to say that the most part of materials for this article I found in the internet.
+This is an agregation of usefull tips for zsh.</p>
+
+<p>Here is my <em>.zshrc</em> file:
+<div><script src='https://gist.github.com/1754521.js?file='></script>
+<noscript><pre><code>PROMPT='%B%F{green}%n@%m%f:%F{blue}%~%f%b%(!.#.$) '
+
+autoload -U compinit
+compinit
+
+zmodload zsh/complist
+zstyle ':completion:*' menu yes select
+
+export CLICOLOR=1
+export LSCOLORS=exfxcxdxbxegedabagacad
+export LS_COLORS='di=34;40:ln=35;40:so=32;40:pi=33;40:ex=31;40:bd=34;46:cd=34;43:su=0;41:sg=0;46:tw=0;42:ow=0;43:'
+zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
+
+zstyle ':completion:*' use-cache on
+zstyle ':completion:*' cache-path ~/.zsh/cache
+
+setopt AUTO_CD BSD_ECHO
+
+_force_rehash() {
+  (( CURRENT == 1 )) &amp;&amp; rehash
+  return 1
+}
+
+zstyle ':completion:::::' completer _force_rehash _complete
+
+setopt SH_WORD_SPLIT #spaces as in bash
+
+if [ -e $HOME/.ssh/known_hosts ] ; then
+  hosts=(${${${(f)&quot;$(&lt;$HOME/.ssh/known_hosts)&quot;}%%\ *}%%,*})
+  zstyle ':completion:*:hosts' hosts $hosts
+fi
+
+typeset -U path cdpath fpath manpath
+
+autoload -U predict-on
+zle -N predict-on
+zle -N predict-off
+bindkey &quot;^X^Z&quot; predict-on # C-x C-z
+bindkey &quot;^Z&quot; predict-off # C-z
+
+autoload -U zcalc zed
+
+export HISTFILE=~/.zsh_history
+export HISTSIZE=1000
+export SAVEHIST=1000
+setopt APPEND_HISTORY HIST_IGNORE_ALL_DUPS HIST_IGNORE_SPACE HIST_REDUCE_BLANKS
+
+bindkey '^[[3~' delete-char
+bindkey '^E' expand-cmd-path
+
+alias df='df -h'
+alias du='du -sh'
+alias grep='egrep --color=auto'
+alias ll='ls -l'
+</code></pre></noscript></div>
+</p>
+
+<p>There are a lot of terminal's improvements, such as extended autocompletion and forced rehash.
+I use this configuration at Ubuntu 11.10 and Mac OS X 10.7.3.
+You can activate autocompletion by <em>Tab</em> button and control it by arrow keys.
+It works with files, directories and hosts.</p>
+
+<p>I don't have much experience in configuring zsh, but feel free to ask me about something you are intersting in.</p>
+
+<p>P.S. Some screen shots of my terminal:</p>
+
+<p><a href="/downloads/images/screen_shot_1.png"><img src="/downloads/images/screen_shot_1.png"></a>
+<a href="/downloads/images/screen_shot_2.png"><img src="/downloads/images/screen_shot_2.png"></a>
+<a href="/downloads/images/screen_shot_3.png"><img src="/downloads/images/screen_shot_3.png"></a>
+<a href="/downloads/images/screen_shot_4.png"><img src="/downloads/images/screen_shot_4.png"></a></p>
+]]></content>
+  </entry>
+  
+</feed>

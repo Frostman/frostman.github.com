@@ -5,13 +5,12 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Blog Archive - Frostman's blog</title>
+  <title>Synchronized in Java - Frostman's blog</title>
   <meta name="author" content="Sergey Lukjanov">
 
   
-  <meta name="description" content="Blog Archive 2012 SSH Tunneling
-Mar 28 2012 posted in Port forwarding, Ssh, Tips, Tunneling, nix Shell improvements with Zsh
-Feb 07 2012 posted in &hellip;">
+  <meta name="description" content="We need synchronizations, when we are writing applications that work with variables from more than one thread. The most simple
+way to avoid issues of &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -20,7 +19,7 @@ Feb 07 2012 posted in &hellip;">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://slukjanov.name/blog/archives/">
+  <link rel="canonical" href="http://slukjanov.name/blog/2011/09/28/synchronized-in-java/">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -104,109 +103,132 @@ Feb 07 2012 posted in &hellip;">
   <div id="main">
     <div id="content">
       <div>
-<article role="article">
+<article class="hentry" role="article">
   
   <header>
-    <h1 class="entry-title">Blog Archive</h1>
+    
+      <h1 class="entry-title">Synchronized in Java</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-09-28T21:01:00+04:00" pubdate data-updated="true">Sep 28<span>th</span>, 2011</time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
     
   </header>
-  
-  <div id="blog-archives">
 
 
+<div class="entry-content"><p>We need synchronizations, when we are writing applications that work with variables from more than one thread. The most simple
+way to avoid issues of parallel accessing to variable is to use synchronized statement. In Java there are two ways to use
+<code>synchronized</code>:</p>
 
-  
-  <h2>2012</h2>
-
-<article>
-  
-<h1><a href="/blog/2012/03/28/ssh-tunneling/">SSH Tunneling</a></h1>
-<time datetime="2012-03-28T09:01:00+04:00" pubdate><span class='month'>Mar</span> <span class='day'>28</span> <span class='year'>2012</span></time>
-
-<footer>
-  <span class="categories">posted in <a class='category' href='/blog/categories/port-forwarding/'>Port forwarding</a>, <a class='category' href='/blog/categories/ssh/'>Ssh</a>, <a class='category' href='/blog/categories/tips/'>Tips</a>, <a class='category' href='/blog/categories/tunneling/'>Tunneling</a>, <a class='category' href='/blog/categories/nix/'>nix</a></span>
-</footer>
+<ul>
+<li>use statement synchronized with some monitor-object to create critical section (this is also called &#8220;synchronized block&#8221;):</li>
+</ul>
 
 
-</article>
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>synchronized(monitorObject) {
+</span><span class='line'>  // Critical section :: 
+</span><span class='line'>  // this code block can be accessed 
+</span><span class='line'>  // by only one thread at the time
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
 
 
+<ul>
+<li>mark method with <code>synchronized</code> keyword and then:
 
-<article>
-  
-<h1><a href="/blog/2012/02/07/shell-improvements-with-zsh/">Shell improvements with Zsh</a></h1>
-<time datetime="2012-02-07T00:20:00+04:00" pubdate><span class='month'>Feb</span> <span class='day'>07</span> <span class='year'>2012</span></time>
-
-<footer>
-  <span class="categories">posted in <a class='category' href='/blog/categories/shell/'>Shell</a>, <a class='category' href='/blog/categories/tips/'>Tips</a>, <a class='category' href='/blog/categories/zsh/'>Zsh</a>, <a class='category' href='/blog/categories/nix/'>nix</a></span>
-</footer>
-
-
-</article>
+<ul>
+<li>if method is static, it is equal to <code>synchronized(DeclaredClass.class) { method body }</code>;</li>
+<li>if method is not static, it is equal to <code>synchronized(this) { method body }</code>.</li>
+</ul>
+</li>
+</ul>
 
 
+<p>So, <code>synchronized</code> takes care about preventing locks in case of multiple read/write access to variables from more than one thread
+In the latest JVM (since 1.5) <code>synchronized</code> overhead is very low in case of unused synchronizations (when only one thread
+try to enter into the synchronized section at a time), but in the old JVMs <code>synchronized</code> was not optimized.</p>
 
-  
-  <h2>2011</h2>
-
-<article>
-  
-<h1><a href="/blog/2011/09/29/html5-slides/">HTML5 Slides</a></h1>
-<time datetime="2011-09-29T13:19:00+04:00" pubdate><span class='month'>Sep</span> <span class='day'>29</span> <span class='year'>2011</span></time>
-
-<footer>
-  <span class="categories">posted in <a class='category' href='/blog/categories/html5/'>HTML5</a>, <a class='category' href='/blog/categories/presentations/'>Presentations</a>, <a class='category' href='/blog/categories/slides/'>Slides</a>, <a class='category' href='/blog/categories/tools/'>Tools</a></span>
-</footer>
-
-
-</article>
-
-
-
-<article>
-  
-<h1><a href="/blog/2011/09/29/lock-and-reentrantlock/">Lock and ReentrantLock</a></h1>
-<time datetime="2011-09-29T09:22:00+04:00" pubdate><span class='month'>Sep</span> <span class='day'>29</span> <span class='year'>2011</span></time>
-
-<footer>
-  <span class="categories">posted in <a class='category' href='/blog/categories/concurrency/'>Concurrency</a>, <a class='category' href='/blog/categories/java/'>Java</a>, <a class='category' href='/blog/categories/lock/'>Lock</a>, <a class='category' href='/blog/categories/readwritelock/'>ReadWriteLock</a>, <a class='category' href='/blog/categories/reentrantlock/'>ReentrantLock</a>, <a class='category' href='/blog/categories/reentrantreadwritelock/'>ReentrantReadWriteLock</a></span>
-</footer>
-
-
-</article>
-
-
-
-<article>
-  
-<h1><a href="/blog/2011/09/28/synchronized-in-java/">Synchronized in Java</a></h1>
-<time datetime="2011-09-28T21:01:00+04:00" pubdate><span class='month'>Sep</span> <span class='day'>28</span> <span class='year'>2011</span></time>
-
-<footer>
-  <span class="categories">posted in <a class='category' href='/blog/categories/concurrency/'>Concurrency</a>, <a class='category' href='/blog/categories/java/'>Java</a>, <a class='category' href='/blog/categories/synchronized/'>Synchronized</a></span>
-</footer>
-
-
-</article>
-
-
-
-<article>
-  
-<h1><a href="/blog/2011/09/27/first-post/">First Post</a></h1>
-<time datetime="2011-09-27T18:48:00+04:00" pubdate><span class='month'>Sep</span> <span class='day'>27</span> <span class='year'>2011</span></time>
-
-<footer>
-  <span class="categories">posted in <a class='category' href='/blog/categories/welcome/'>welcome</a></span>
-</footer>
-
-
-</article>
-
+<p><code>synchronized</code> keyword is not so flexible and configurable as we want sometimes, so you can read about Lock and ReadWriteLock in Java
+<a href="/blog/2011/09/29/lock-and-reentrantlock/">here</a> (my next article).</p>
 </div>
 
+
+  <footer>
+    <p class="meta">
+      
   
+
+<span class="byline author vcard">Posted by <span class="fn">Sergey Lukjanov</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-09-28T21:01:00+04:00" pubdate data-updated="true">Sep 28<span>th</span>, 2011</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/concurrency/'>Concurrency</a>, <a class='category' href='/blog/categories/java/'>Java</a>, <a class='category' href='/blog/categories/synchronized/'>Synchronized</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://slukjanov.name/blog/2011/09/28/synchronized-in-java/" data-via="" data-counturl="http://slukjanov.name/blog/2011/09/28/synchronized-in-java/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2011/09/27/first-post/" title="Previous Post: First Post">&laquo; First Post</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2011/09/29/lock-and-reentrantlock/" title="Next Post: Lock and ReentrantLock">Lock and ReentrantLock &raquo;</a>
+      
+    </p>
+  </footer>
 </article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
 
 </div>
 
@@ -249,7 +271,7 @@ Feb 07 2012 posted in &hellip;">
 </section>
 <section>
 <h1>QR-Code<abbr title="The word 'QR Code' is a registered trademark of DENSO WAVE INCORPORATED. It applies only for the word 'QR Code', not for image.">&trade;</abbr></h1>
-<a href="http://slukjanov.name/blog/archives/index.html"><img src="http://chart.apis.google.com/chart?chs=150x150&cht=qr&chld=|0&chco=165B94&chl=http://slukjanov.name/blog/archives/index.html" alt="post-qrcode"></a></section>
+<a href="http://slukjanov.name/blog/2011/09/28/synchronized-in-java/"><img src="http://chart.apis.google.com/chart?chs=150x150&cht=qr&chld=|0&chco=165B94&chl=http://slukjanov.name/blog/2011/09/28/synchronized-in-java/" alt="post-qrcode"></a></section>
 
   
 </aside>
@@ -269,7 +291,10 @@ Feb 07 2012 posted in &hellip;">
       var disqus_shortname = 'slukjanov';
       
         
-        var disqus_script = 'count.js';
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://slukjanov.name/blog/2011/09/28/synchronized-in-java/';
+        var disqus_url = 'http://slukjanov.name/blog/2011/09/28/synchronized-in-java/';
+        var disqus_script = 'embed.js';
       
     (function () {
       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;

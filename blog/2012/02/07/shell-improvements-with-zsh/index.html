@@ -5,13 +5,12 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Blog Archive - Frostman's blog</title>
+  <title>Shell improvements with Zsh - Frostman's blog</title>
   <meta name="author" content="Sergey Lukjanov">
 
   
-  <meta name="description" content="Blog Archive 2012 SSH Tunneling
-Mar 28 2012 posted in Port forwarding, Ssh, Tips, Tunneling, nix Shell improvements with Zsh
-Feb 07 2012 posted in &hellip;">
+  <meta name="description" content="First of all, I want to say that the most part of materials for this article I found in the internet.
+This is an agregation of usefull tips for zsh. &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -20,7 +19,7 @@ Feb 07 2012 posted in &hellip;">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://slukjanov.name/blog/archives/">
+  <link rel="canonical" href="http://slukjanov.name/blog/2012/02/07/shell-improvements-with-zsh/">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -104,109 +103,170 @@ Feb 07 2012 posted in &hellip;">
   <div id="main">
     <div id="content">
       <div>
-<article role="article">
+<article class="hentry" role="article">
   
   <header>
-    <h1 class="entry-title">Blog Archive</h1>
+    
+      <h1 class="entry-title">Shell Improvements With Zsh</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-02-07T00:20:00+04:00" pubdate data-updated="true">Feb 7<span>th</span>, 2012</time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
     
   </header>
-  
-  <div id="blog-archives">
 
 
+<div class="entry-content"><p>First of all, I want to say that the most part of materials for this article I found in the internet.
+This is an agregation of usefull tips for zsh.</p>
 
-  
-  <h2>2012</h2>
+<p>Here is my <em>.zshrc</em> file:</p>
 
-<article>
-  
-<h1><a href="/blog/2012/03/28/ssh-tunneling/">SSH Tunneling</a></h1>
-<time datetime="2012-03-28T09:01:00+04:00" pubdate><span class='month'>Mar</span> <span class='day'>28</span> <span class='year'>2012</span></time>
+<div><script src='https://gist.github.com/1754521.js?file='></script>
+<noscript><pre><code>PROMPT='%B%F{green}%n@%m%f:%F{blue}%~%f%b%(!.#.$) '
 
-<footer>
-  <span class="categories">posted in <a class='category' href='/blog/categories/port-forwarding/'>Port forwarding</a>, <a class='category' href='/blog/categories/ssh/'>Ssh</a>, <a class='category' href='/blog/categories/tips/'>Tips</a>, <a class='category' href='/blog/categories/tunneling/'>Tunneling</a>, <a class='category' href='/blog/categories/nix/'>nix</a></span>
-</footer>
+autoload -U compinit
+compinit
 
+zmodload zsh/complist
+zstyle ':completion:*' menu yes select
 
-</article>
+export CLICOLOR=1
+export LSCOLORS=exfxcxdxbxegedabagacad
+export LS_COLORS='di=34;40:ln=35;40:so=32;40:pi=33;40:ex=31;40:bd=34;46:cd=34;43:su=0;41:sg=0;46:tw=0;42:ow=0;43:'
+zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
 
+zstyle ':completion:*' use-cache on
+zstyle ':completion:*' cache-path ~/.zsh/cache
 
+setopt AUTO_CD BSD_ECHO
 
-<article>
-  
-<h1><a href="/blog/2012/02/07/shell-improvements-with-zsh/">Shell improvements with Zsh</a></h1>
-<time datetime="2012-02-07T00:20:00+04:00" pubdate><span class='month'>Feb</span> <span class='day'>07</span> <span class='year'>2012</span></time>
+_force_rehash() {
+  (( CURRENT == 1 )) &amp;&amp; rehash
+  return 1
+}
 
-<footer>
-  <span class="categories">posted in <a class='category' href='/blog/categories/shell/'>Shell</a>, <a class='category' href='/blog/categories/tips/'>Tips</a>, <a class='category' href='/blog/categories/zsh/'>Zsh</a>, <a class='category' href='/blog/categories/nix/'>nix</a></span>
-</footer>
+zstyle ':completion:::::' completer _force_rehash _complete
 
+setopt SH_WORD_SPLIT #spaces as in bash
 
-</article>
+if [ -e $HOME/.ssh/known_hosts ] ; then
+  hosts=(${${${(f)&quot;$(&lt;$HOME/.ssh/known_hosts)&quot;}%%\ *}%%,*})
+  zstyle ':completion:*:hosts' hosts $hosts
+fi
 
+typeset -U path cdpath fpath manpath
 
+autoload -U predict-on
+zle -N predict-on
+zle -N predict-off
+bindkey &quot;^X^Z&quot; predict-on # C-x C-z
+bindkey &quot;^Z&quot; predict-off # C-z
 
-  
-  <h2>2011</h2>
+autoload -U zcalc zed
 
-<article>
-  
-<h1><a href="/blog/2011/09/29/html5-slides/">HTML5 Slides</a></h1>
-<time datetime="2011-09-29T13:19:00+04:00" pubdate><span class='month'>Sep</span> <span class='day'>29</span> <span class='year'>2011</span></time>
+export HISTFILE=~/.zsh_history
+export HISTSIZE=1000
+export SAVEHIST=1000
+setopt APPEND_HISTORY HIST_IGNORE_ALL_DUPS HIST_IGNORE_SPACE HIST_REDUCE_BLANKS
 
-<footer>
-  <span class="categories">posted in <a class='category' href='/blog/categories/html5/'>HTML5</a>, <a class='category' href='/blog/categories/presentations/'>Presentations</a>, <a class='category' href='/blog/categories/slides/'>Slides</a>, <a class='category' href='/blog/categories/tools/'>Tools</a></span>
-</footer>
+bindkey '^[[3~' delete-char
+bindkey '^E' expand-cmd-path
 
-
-</article>
-
-
-
-<article>
-  
-<h1><a href="/blog/2011/09/29/lock-and-reentrantlock/">Lock and ReentrantLock</a></h1>
-<time datetime="2011-09-29T09:22:00+04:00" pubdate><span class='month'>Sep</span> <span class='day'>29</span> <span class='year'>2011</span></time>
-
-<footer>
-  <span class="categories">posted in <a class='category' href='/blog/categories/concurrency/'>Concurrency</a>, <a class='category' href='/blog/categories/java/'>Java</a>, <a class='category' href='/blog/categories/lock/'>Lock</a>, <a class='category' href='/blog/categories/readwritelock/'>ReadWriteLock</a>, <a class='category' href='/blog/categories/reentrantlock/'>ReentrantLock</a>, <a class='category' href='/blog/categories/reentrantreadwritelock/'>ReentrantReadWriteLock</a></span>
-</footer>
-
-
-</article>
-
-
-
-<article>
-  
-<h1><a href="/blog/2011/09/28/synchronized-in-java/">Synchronized in Java</a></h1>
-<time datetime="2011-09-28T21:01:00+04:00" pubdate><span class='month'>Sep</span> <span class='day'>28</span> <span class='year'>2011</span></time>
-
-<footer>
-  <span class="categories">posted in <a class='category' href='/blog/categories/concurrency/'>Concurrency</a>, <a class='category' href='/blog/categories/java/'>Java</a>, <a class='category' href='/blog/categories/synchronized/'>Synchronized</a></span>
-</footer>
+alias df='df -h'
+alias du='du -sh'
+alias grep='egrep --color=auto'
+alias ll='ls -l'
+</code></pre></noscript></div>
 
 
-</article>
+<p>There are a lot of terminal&#8217;s improvements, such as extended autocompletion and forced rehash.
+I use this configuration at Ubuntu 11.10 and Mac OS X 10.7.3.
+You can activate autocompletion by <em>Tab</em> button and control it by arrow keys.
+It works with files, directories and hosts.</p>
 
+<p>I don&#8217;t have much experience in configuring zsh, but feel free to ask me about something you are intersting in.</p>
 
+<p>P.S. Some screen shots of my terminal:</p>
 
-<article>
-  
-<h1><a href="/blog/2011/09/27/first-post/">First Post</a></h1>
-<time datetime="2011-09-27T18:48:00+04:00" pubdate><span class='month'>Sep</span> <span class='day'>27</span> <span class='year'>2011</span></time>
-
-<footer>
-  <span class="categories">posted in <a class='category' href='/blog/categories/welcome/'>welcome</a></span>
-</footer>
-
-
-</article>
-
+<p><a href="/downloads/images/screen_shot_1.png"><img src="/downloads/images/screen_shot_1.png"></a>
+<a href="/downloads/images/screen_shot_2.png"><img src="/downloads/images/screen_shot_2.png"></a>
+<a href="/downloads/images/screen_shot_3.png"><img src="/downloads/images/screen_shot_3.png"></a>
+<a href="/downloads/images/screen_shot_4.png"><img src="/downloads/images/screen_shot_4.png"></a></p>
 </div>
 
+
+  <footer>
+    <p class="meta">
+      
   
+
+<span class="byline author vcard">Posted by <span class="fn">Sergey Lukjanov</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-02-07T00:20:00+04:00" pubdate data-updated="true">Feb 7<span>th</span>, 2012</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/shell/'>Shell</a>, <a class='category' href='/blog/categories/tips/'>Tips</a>, <a class='category' href='/blog/categories/zsh/'>Zsh</a>, <a class='category' href='/blog/categories/nix/'>nix</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://slukjanov.name/blog/2012/02/07/shell-improvements-with-zsh/" data-via="" data-counturl="http://slukjanov.name/blog/2012/02/07/shell-improvements-with-zsh/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2011/09/29/html5-slides/" title="Previous Post: HTML5 Slides">&laquo; HTML5 Slides</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2012/03/28/ssh-tunneling/" title="Next Post: SSH Tunneling">SSH Tunneling &raquo;</a>
+      
+    </p>
+  </footer>
 </article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
 
 </div>
 
@@ -249,7 +309,7 @@ Feb 07 2012 posted in &hellip;">
 </section>
 <section>
 <h1>QR-Code<abbr title="The word 'QR Code' is a registered trademark of DENSO WAVE INCORPORATED. It applies only for the word 'QR Code', not for image.">&trade;</abbr></h1>
-<a href="http://slukjanov.name/blog/archives/index.html"><img src="http://chart.apis.google.com/chart?chs=150x150&cht=qr&chld=|0&chco=165B94&chl=http://slukjanov.name/blog/archives/index.html" alt="post-qrcode"></a></section>
+<a href="http://slukjanov.name/blog/2012/02/07/shell-improvements-with-zsh/"><img src="http://chart.apis.google.com/chart?chs=150x150&cht=qr&chld=|0&chco=165B94&chl=http://slukjanov.name/blog/2012/02/07/shell-improvements-with-zsh/" alt="post-qrcode"></a></section>
 
   
 </aside>
@@ -269,7 +329,10 @@ Feb 07 2012 posted in &hellip;">
       var disqus_shortname = 'slukjanov';
       
         
-        var disqus_script = 'count.js';
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://slukjanov.name/blog/2012/02/07/shell-improvements-with-zsh/';
+        var disqus_url = 'http://slukjanov.name/blog/2012/02/07/shell-improvements-with-zsh/';
+        var disqus_script = 'embed.js';
       
     (function () {
       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;

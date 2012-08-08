@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: ReadWriteLock | Frostman's blog]]></title>
+  <link href="http://slukjanov.name/blog/categories/readwritelock/atom.xml" rel="self"/>
+  <link href="http://slukjanov.name/"/>
+  <updated>2012-08-08T19:39:13+04:00</updated>
+  <id>http://slukjanov.name/</id>
+  <author>
+    <name><![CDATA[Sergey Lukjanov]]></name>
+    <email><![CDATA[blog@slukjanov.name]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Lock and ReentrantLock]]></title>
+    <link href="http://slukjanov.name/blog/2011/09/29/lock-and-reentrantlock/"/>
+    <updated>2011-09-29T09:22:00+04:00</updated>
+    <id>http://slukjanov.name/blog/2011/09/29/lock-and-reentrantlock</id>
+    <content type="html"><![CDATA[<p>This article is about locks in Java. Here you can read about their usage, fairness policies and performance.</p>
+
+<p>Locks are available since <strong>Java 1.5</strong>.</p>
+
+<h2>Interfaces</h2>
+
+<p>First of all, lets see at interfaces.</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>java.util.concurrent.Lock </span><a href='http://download.oracle.com/javase/6/docs/api/java/util/concurrent/locks/Lock.html'>javadoc </a></figcaption> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">Lock</span> <span class="o">{&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="kt">void</span> <span class="n">lock</span><span class="o">();</span>
+</span><span class='line'><span class="kt">void</span> <span class="nf">lockInterruptibly</span><span class="o">()</span> <span class="kd">throws</span> <span class="n">InterruptedException</span><span class="o">;</span>
+</span><span class='line'><span class="kt">boolean</span> <span class="nf">tryLock</span><span class="o">();</span>
+</span><span class='line'><span class="kt">boolean</span> <span class="nf">tryLock</span><span class="o">(</span><span class="kt">long</span> <span class="n">time</span><span class="o">,</span> <span class="n">TimeUnit</span> <span class="n">unit</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">InterruptedException</span><span class="o">;</span>
+</span><span class='line'><span class="kt">void</span> <span class="nf">unlock</span><span class="o">();</span>
+</span><span class='line'><span class="n">Condition</span> <span class="nf">newCondition</span><span class="o">();</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>As we see, it prodives opportunity of acquiring lock by different ways:</p>
+
+<ul>
+<li>if we are using <code>lock()</code> and the lock is not available the current thread will be suspended until the lock will be released;</li>
+<li><code>lockInterruptible()</code> method acquires the lock until the current thread will be interrupted or lock will be released;</li>
+<li><code>tryLock()</code> method acquires the lock only if it is available at the time of invocation (non-blocking, not waiting for
+the lock will be released);</li>
+<li>if we want to acquire the lock interruptibly with the specified waiting timeout we should use <code>tryLock(...)</code> method.</li>
+</ul>
+
+
+<p>There is only one method for unlocking the lock: <code>unlock()</code> and it works as it named.</p>
+
+<p>Locks are more flexible and configurable alternative for <code>synchronized</code> methods and statements, but we should remeber that
+instead of synchronized, <strong>noone</strong> will unlock the lock for us if an exception occures or return statement invokes. So,
+in most cases, the following idiom should be used:</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">Lock</span> <span class="n">l</span> <span class="o">=</span> <span class="o">...;</span>
+</span><span class='line'><span class="n">l</span><span class="o">.</span><span class="na">lock</span><span class="o">();</span>
+</span><span class='line'><span class="k">try</span> <span class="o">{&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="c1">// some business logic that needs to be synchronized</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;}</span> <span class="k">finally</span> <span class="o">{&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="n">l</span><span class="o">.</span><span class="na">unlock</span><span class="o">();</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>java.util.concurrent.locks.ReadWriteLock </span><a href='http://download.oracle.com/javase/6/docs/api/java/util/concurrent/locks/ReadWriteLock.html'>javadoc </a></figcaption> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">ReadWriteLock</span> <span class="o">{&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="n">Lock</span> <span class="n">readLock</span><span class="o">();</span>
+</span><span class='line'><span class="n">Lock</span> <span class="nf">writeLock</span><span class="o">();</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>ReadWriteLock is a pair of assotiated locks. First lock is used <strong>only</strong> for <strong>read-only</strong> operations (supports <strong>multiple</strong>
+locks at the same time) and the second lock is for <strong>write</strong> operations (<strong>exclusive</strong> lock). The read lock can be acquired
+only if the write lock is released. When we lock the write lock, it will wait for releasing of all read locks and then acquires.
+ReadWriteLock will improve performance in case of using multiple readers and much smaller number of writers, because many of
+readers will work at the same time.</p>
+
+<h2>Implementations</h2>
+
+<p>Java provides two implementations of these locks that we care about - <code>ReentrantLock</code> and <code>ReentrantReadWriteLock</code>.
+As you see, both of them are reentrant. It means that a thread can acquire the same lock multiple times without any
+issue. In fact reentrant locking increments special thread-personal counter (unlocking - decrements) and the lock will
+be released only when counter reaches zero.</p>
+
+<p>Each of lock's implementations has additional methods that help us. Here are some of them:</p>
+
+<ul>
+<li>for <code>ReentrantLock</code> class:
+
+<ul>
+<li><code>isHeldByCurrentThread()</code> returns true iff the lock is locked by the current thread;</li>
+<li><code>getHoldCount()</code> returns number (int) of locks on the lock by the current thread;</li>
+<li><code>getQueueLength()</code> returns an <strong>estimate</strong> number of threads that waits to acquire the lock;</li>
+<li><code>isLocked()</code> returns true if any thread holds this lock and false otherwise;</li>
+</ul>
+</li>
+<li>for <code>ReentrantReadWriteLock</code> class:
+
+<ul>
+<li><code>isWriteLocked()</code> returns true if someone holds the write lock;</li>
+<li><code>isWriteLockedByCurrentThread()</code> returns true if the lock is locked by the current thread;</li>
+<li><code>getReadHoldCount()</code> returns number (int) of locks on the read lock by the current thread.</li>
+</ul>
+</li>
+</ul>
+
+
+<h2>Fairness</h2>
+
+<p>One of the interesting features of reentrant locks is <strong>fairness</strong>. When we are creating an instance of ReentrantLock or
+ReentrantReadWriteLock we can pass fair flag to the constructor. The difference of fair and non-fair locks is in granting
+access policy to threads that wait in the queue to lock the lock. The fair lock grants access to the longest-waiting thread,
+so it look like FIFO (First-In-First-Out). A non-fair lock does not guarantee any particular access order.
+Performance of fair locks is near to <code>synchronized</code> block and non-fair locks is much faster than them.</p>
+
+<p>By default, all locks are non-fair. Synchronized keyword and statement are non-fair, too. Fair locks have some disadvantages:</p>
+
+<ul>
+<li>performance degradation;</li>
+<li>fair locks do <strong>not guarantiee</strong> fair thread ordering in real world.</li>
+</ul>
+
+
+<p>Micro-benchmarking in Java is not so good as we want. There are several things that can change results of tests:</p>
+
+<ul>
+<li>JVM warmup (the code becomes faster and faster while its working);</li>
+<li>Class loading (all application classes must be loaded);</li>
+<li>JIT compilation (JVM needs time to find hot parts of the code);</li>
+<li>GC (gc can happen while benchmarking and increase the time much).</li>
+</ul>
+
+
+<p>Instead of this, I think that we can do some micro-benchmarks to check fair locks performance.
+We have T threads, each of them will lock the lock, increment global counter, increment personal counter and unlock the lock.
+Test will be ended when the global counter reaches N. So, all threads should have equal values of personal counters
+(small deviation can be ignored) with fair lock and different values with non-fair lock. Lets see at average results of running
+such micro-benchmark. I ran them for 50 times with <code>N=1000000</code> and <code>T=10</code> on my laptop (<code>i3 330m 2.13GHz</code>, <code>8Gb RAM</code>, <code>JDK 1.7.0</code>)
+and aggregated results. 'Deviation' - this is how personal counter differs from the expected value (<code>N/T</code>).</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>Fair Lock </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>Deviation:&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>max: 0,3222%
+</span><span class='line'>avg: 0,0644%
+</span><span class='line'>min: 0,0351%
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>Average takes: 10304ms</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>Non-fair Lock </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>Deviation:&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>max: 20,1312%
+</span><span class='line'>avg: 2,1682%
+</span><span class='line'>min: 0,6022%
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>Average takes: 104ms</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>You can find sources of the test <a href="https://gist.github.com/1250500">here</a>.
+The results of test match javadoc's warning about fair locks absolutly:</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>* Programs using fair locks accessed by many threads
+</span><span class='line'>* may display lower overall throughput (i.e., are slower; often much
+</span><span class='line'>* slower) than those using the default setting, but have smaller
+</span><span class='line'>* variances in times to obtain locks and guarantee lack of
+</span><span class='line'>* starvation.</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>As we see "much slower" is up to <strong>100</strong> times slower!</p>
+
+<p>So, we should remember about all features of locks and their configurations.
+I think that we can use ReentrantLock and ReentrantReadWriteLock without any indeterminacy now.</p>
+]]></content>
+  </entry>
+  
+</feed>

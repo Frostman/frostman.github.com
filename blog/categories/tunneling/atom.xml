@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Tunneling | Frostman's blog]]></title>
+  <link href="http://slukjanov.name/blog/categories/tunneling/atom.xml" rel="self"/>
+  <link href="http://slukjanov.name/"/>
+  <updated>2012-08-08T19:39:13+04:00</updated>
+  <id>http://slukjanov.name/</id>
+  <author>
+    <name><![CDATA[Sergey Lukjanov]]></name>
+    <email><![CDATA[blog@slukjanov.name]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[SSH Tunneling]]></title>
+    <link href="http://slukjanov.name/blog/2012/03/28/ssh-tunneling/"/>
+    <updated>2012-03-28T09:01:00+04:00</updated>
+    <id>http://slukjanov.name/blog/2012/03/28/ssh-tunneling</id>
+    <content type="html"><![CDATA[<p>I create SSH tunnels every day and this article is a small introduction into the SSH tunneling
+(also known as "port forwarding").
+A secure shell (SSH) tunnel consists of an encrypted tunnel created through a SSH protocol connection.
+Users may set up SSH tunnels to transfer unencrypted traffic over a network through an encrypted channel.
+SSH is typically used to log into a remote machine and execute commands, but it also supports tunneling,
+forwarding TCP ports and X11 connections; it can transfer files using the associated SSH file transfer (SFTP)
+or secure copy (SCP) protocols. Also tunnels provide an ability to bypass firewalls :)</p>
+
+<p>So, let's start. Ports can be forwarded in three ways:</p>
+
+<ol>
+<li>Local port forwarding;</li>
+<li>Remote port forwarding;</li>
+<li>Dynamic port forwarding (proxy).</li>
+</ol>
+
+
+<p>Wikipedia says that:</p>
+
+<pre><code>Port forwarding or port mapping is a name given to the combined technique of
+* translating the address and/or port number of a packet to a new destination
+* possibly accepting such packet(s) in a packet filter (firewall)
+* forwarding the packet according to the routing table.
+</code></pre>
+
+<h2>Tunneling with local port forwarding</h2>
+
+<p>Let's imagine that there are some computers with specific abilities:</p>
+
+<ul>
+<li><code>work</code> - can't access <code>target</code> (for example, <code>target</code> is blocked by firewall or <code>target</code> can be
+unaccessible from the <code>work</code>'s network)</li>
+<li><code>bridge</code> (<code>gateway</code>) - accessible from <code>work</code> and can access <code>target</code> (need to have IP accessible from <code>work</code>)</li>
+</ul>
+
+
+<p>So, we want to access <code>target</code> throw the <code>global</code> machine.</p>
+
+<p><code>Access from work computer to some external banned resource</code></p>
+
+<p>To create the SSH tunnel you should execute the following command from <code>work</code> (<code>local</code>) machine:</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>ssh -L [&lt;local-address-to-listen>:]&lt;local-port-to-listen>:&lt;target-host>:&lt;target-port> &lt;bridge></span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Now the SSH client at <code>work</code> will connect to the SSHd running at <code>bridge</code> and bind <code>&lt;target-host&gt;:&lt;target-port&gt;</code>
+to listen for local requests to <code>[&lt;local-address-to-listen&gt;:]&lt;local-port-to-listen&gt;</code>. At the <code>bridge</code>
+end the connection to <code>&lt;target-host&gt;:&lt;target-port&gt;</code> will be created. So <code>work</code> doesn’t need to know how to connect to
+<code>&lt;target-host&gt;:&lt;target-port&gt;</code>, only <code>bridge</code> needs to worry about that. The channel between <code>work</code> and <code>bridge</code> will be
+<strong>encrypted</strong> (SSH tunnel), but the connection between <code>bridge</code> and <code>&lt;target-host&gt;:&lt;target-port&gt;</code> will be <strong>unencrypted</strong>.</p>
+
+<p>After executing this command, it is possible to access <code>&lt;target-host&gt;:&lt;target-port&gt;</code> by accessing
+<code>[&lt;local-address-to-listen&gt;:]&lt;local-port-to-listen&gt;</code> at <code>work</code> computer. The <code>bridge</code> computer will act as a gateway
+which would accept requests from <code>work</code> machine and fetch data/tunnelling it back.</p>
+
+<h2>Tunneling with remote port forwarding  (reversed tunneling)</h2>
+
+<p>Let's reverse the problem.</p>
+
+<ul>
+<li><code>home</code> - can't access <code>target</code> (for example, <code>target</code> is protected by firewall or <code>target</code> can be unacessible from the
+<code>home</code>'s network)</li>
+<li><code>bridge</code> (<code>gateway</code> or <code>work</code>) - accessible from <code>home</code> and can access <code>target</code> (need to have IP accessible from <code>home</code>)</li>
+</ul>
+
+
+<p>To create the SSH tunnel you should execute the following command from <code>bridge</code> (<code>gateway</code>/<code>work</code>) machine:</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>ssh -R [&lt;home-address-to-listen>:]&lt;home-port-to-listen>:&lt;target-host>:&lt;target-port> &lt;home></span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>After executing of this command, the SSH client at <code>bridge</code> will connect to SSHd running at <code>home</code> and create the tunnel.
+Then the server will bind <code>[&lt;home-address-to-listen&gt;:]&lt;home-port-to-listen&gt;</code> to listen for incoming requests which would
+be routed through the created SSH tunnel between <code>home</code> and <code>gateway</code>. Now it’s possible to access the "internal"
+resource <code>&lt;target-host&gt;:&lt;target-port&gt;</code> by accessing <code>[&lt;home-address-to-listen&gt;:]&lt;home-port-to-listen&gt;</code> from the <code>home</code>
+machine. The <code>gateway</code> will then create a connection to <code>&lt;target-host&gt;:&lt;target-port&gt;</code> and relay back the response to
+<code>home</code> via the created SSH tunnel.</p>
+
+<p>With this approach we need to create the splitted SSH tunnel for each new resource. But SSH provides us an ability to
+proxy traffic to any resource using SSH tunnel and it named <code>dynamic port forwarding</code>.</p>
+
+<h2>Dynamic port forwarding (proxy)</h2>
+
+<p>Dynamic port forwarding provides us an ability to configure one local port for tunnelling data to all remote destinations
+using the SOCKS protocol. At the client side of the SSH tunnel a SOCKS proxy would be created and any application that can
+work throw SOCKS protocol can use it to access some resources that accessible only from the other host.</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>ssh -D [&lt;local-address-to-listen>:]&lt;local-port-to-listen> &lt;gateway></span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<h2>Additional SSH flags</h2>
+
+<p>There are several intresting <code>ssh</code> command flags:</p>
+
+<ul>
+<li><code>-v</code> - verbose output</li>
+<li><code>-q</code> - quiet mode</li>
+<li><code>-1</code> - forces ssh to try protocol version 1 only</li>
+<li><code>-2</code> - forces ssh to try protocol version 2 only</li>
+<li><code>-4</code> - forces ssh to use IPv4 addresses only</li>
+<li><code>-6</code> - forces ssh to use IPv6 addresses only</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+</feed>

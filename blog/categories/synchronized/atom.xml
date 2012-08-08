@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Synchronized | Frostman's blog]]></title>
+  <link href="http://slukjanov.name/blog/categories/synchronized/atom.xml" rel="self"/>
+  <link href="http://slukjanov.name/"/>
+  <updated>2012-08-08T19:39:13+04:00</updated>
+  <id>http://slukjanov.name/</id>
+  <author>
+    <name><![CDATA[Sergey Lukjanov]]></name>
+    <email><![CDATA[blog@slukjanov.name]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Synchronized in Java]]></title>
+    <link href="http://slukjanov.name/blog/2011/09/28/synchronized-in-java/"/>
+    <updated>2011-09-28T21:01:00+04:00</updated>
+    <id>http://slukjanov.name/blog/2011/09/28/synchronized-in-java</id>
+    <content type="html"><![CDATA[<p>We need synchronizations, when we are writing applications that work with variables from more than one thread. The most simple
+way to avoid issues of parallel accessing to variable is to use synchronized statement. In Java there are two ways to use
+<code>synchronized</code>:</p>
+
+<ul>
+<li><p>use statement synchronized with some monitor-object to create critical section (this is also called "synchronized block"):
+<div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>synchronized(monitorObject) {
+</span><span class='line'>// Critical section ::
+</span><span class='line'>// this code block can be accessed
+</span><span class='line'>// by only one thread at the time
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure></notextile></div></p></li>
+<li><p>mark method with <code>synchronized</code> keyword and then:</p>
+
+<ul>
+<li>if method is static, it is equal to <code>synchronized(DeclaredClass.class) { method body }</code>;</li>
+<li>if method is not static, it is equal to <code>synchronized(this) { method body }</code>.</li>
+</ul>
+</li>
+</ul>
+
+
+<p>So, <code>synchronized</code> takes care about preventing locks in case of multiple read/write access to variables from more than one thread
+In the latest JVM (since 1.5) <code>synchronized</code> overhead is very low in case of unused synchronizations (when only one thread
+try to enter into the synchronized section at a time), but in the old JVMs <code>synchronized</code> was not optimized.</p>
+
+<p><code>synchronized</code> keyword is not so flexible and configurable as we want sometimes, so you can read about Lock and ReadWriteLock in Java
+<a href="/blog/2011/09/29/lock-and-reentrantlock/">here</a> (my next article).</p>
+]]></content>
+  </entry>
+  
+</feed>
