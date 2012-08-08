@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Tips | Frostman's blog]]></title>
   <link href="http://slukjanov.name/blog/categories/tips/atom.xml" rel="self"/>
   <link href="http://slukjanov.name/"/>
-  <updated>2012-08-08T19:39:13+04:00</updated>
+  <updated>2012-08-08T20:45:44+04:00</updated>
   <id>http://slukjanov.name/</id>
   <author>
     <name><![CDATA[Sergey Lukjanov]]></name>
@@ -12,6 +12,52 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Mountain Lion and iStat Pro]]></title>
+    <link href="http://slukjanov.name/blog/2012/08/08/mountain-lion-and-istat-pro/"/>
+    <updated>2012-08-08T19:58:00+04:00</updated>
+    <id>http://slukjanov.name/blog/2012/08/08/mountain-lion-and-istat-pro</id>
+    <content type="html"><![CDATA[<p>I'm using OS X at my MBP as a main operation system and iStat Pro widget
+for Dashboard to monitor temps, processes, etc.
+After upgrading to OS X 10.8 Mountain Lion the processes section was not working.</p>
+
+<p>Here is a small instruction to make processes be displayed again.</p>
+
+<ol>
+<li><p>Open iStat Pro widget directory, it is located in <code>~/Library/Widgets/iStat\ Pro.wdgt/</code>
+or <code>/Library/Widgets/iStat\ Pro.wdgt/</code>;</p></li>
+<li><p>If you are using horizontal (wide) widget edit the <code>Wide.js</code> file and if
+vertical (tall) - <code>Tall.js</code>;</p></li>
+<li><p>Find function <code>WideSkinController.prototype.updateProcesses = function(){</code> and
+replace all <code>PID|$1</code> with <code>PID| $1</code> (add space after pipe) in this section. So, you should
+get something like this:</p></li>
+</ol>
+
+
+<p>```js
+WideSkinController.prototype.updateProcesses = function(){</p>
+
+<pre><code>var _self = this;
+var exclude = "";
+if(p.v("processes_excludewidgets") == 'on')
+    exclude = " grep -v DashboardClient | ";
+
+if(p.v("processes_sort_mode") == 'cpu')
+    widget.system('ps -arcwwwxo "pid %cpu command" | egrep "PID| $1" | grep -v grep | ' + exclude + ' head -7 | tail -6 | awk \'{print "&lt;pid&gt;"$1"&lt;/pid&gt;&lt;cpu&gt;"$2"&lt;/cpu&gt;&lt;name&gt;"$3,$4,$5"&lt;/name&gt;&lt;/item&gt;"}\'', function(data){ _self.updateProcessesOut(data);});
+else
+    widget.system('ps -amcwwwxo "pid rss command"  | egrep "PID| $1" | grep -v grep | ' + exclude + ' head -7 | tail -6 | awk \'{print "&lt;pid&gt;"$1"&lt;/pid&gt;&lt;cpu&gt;"$2"&lt;/cpu&gt;&lt;name&gt;"$3,$4,$5"&lt;/name&gt;&lt;/item&gt;"}\'', function(data){ _self.updateProcessesOut(data);});
+</code></pre>
+
+<p>}
+```</p>
+
+<ol>
+<li>Restart the iStat Pro widget and the processes list will be working again!</li>
+</ol>
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[SSH Tunneling]]></title>

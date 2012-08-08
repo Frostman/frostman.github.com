@@ -9,9 +9,9 @@
   <meta name="author" content="Sergey Lukjanov">
 
   
-  <meta name="description" content="I create SSH tunnels every day and this article is a small introduction into the SSH tunneling
-(also known as &#8220;port forwarding&#8221;).
-A &hellip;">
+  <meta name="description" content="I&#8217;m using OS X at my MBP as a main operation system and iStat Pro widget
+for Dashboard to monitor temps, processes, etc.
+After upgrading to OS &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -105,6 +105,89 @@ A &hellip;">
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/08/08/mountain-lion-and-istat-pro/">Mountain Lion and iStat Pro</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-08-08T19:58:00+04:00" pubdate data-updated="true">Aug 8<span>th</span>, 2012</time>
+        
+         | <a href="/blog/2012/08/08/mountain-lion-and-istat-pro/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>I&#8217;m using OS X at my MBP as a main operation system and iStat Pro widget
+for Dashboard to monitor temps, processes, etc.
+After upgrading to OS X 10.8 Mountain Lion the processes section was not working.</p>
+
+<p>Here is a small instruction to make processes be displayed again.</p>
+
+<ol>
+<li><p>Open iStat Pro widget directory, it is located in <code>~/Library/Widgets/iStat\ Pro.wdgt/</code>
+or <code>/Library/Widgets/iStat\ Pro.wdgt/</code>;</p></li>
+<li><p>If you are using horizontal (wide) widget edit the <code>Wide.js</code> file and if
+vertical (tall) - <code>Tall.js</code>;</p></li>
+<li><p>Find function <code>WideSkinController.prototype.updateProcesses = function(){</code> and
+replace all <code>PID|$1</code> with <code>PID| $1</code> (add space after pipe) in this section. So, you should
+get something like this:</p></li>
+</ol>
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">WideSkinController</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">updateProcesses</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(){</span>
+</span><span class='line'>  <span class="kd">var</span> <span class="nx">_self</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+</span><span class='line'>  <span class="kd">var</span> <span class="nx">exclude</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">;</span>
+</span><span class='line'>  <span class="k">if</span><span class="p">(</span><span class="nx">p</span><span class="p">.</span><span class="nx">v</span><span class="p">(</span><span class="s2">&quot;processes_excludewidgets&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;on&#39;</span><span class="p">)</span>
+</span><span class='line'>      <span class="nx">exclude</span> <span class="o">=</span> <span class="s2">&quot; grep -v DashboardClient | &quot;</span><span class="p">;</span>
+</span><span class='line'>  
+</span><span class='line'>  <span class="k">if</span><span class="p">(</span><span class="nx">p</span><span class="p">.</span><span class="nx">v</span><span class="p">(</span><span class="s2">&quot;processes_sort_mode&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;cpu&#39;</span><span class="p">)</span>
+</span><span class='line'>      <span class="nx">widget</span><span class="p">.</span><span class="nx">system</span><span class="p">(</span><span class="s1">&#39;ps -arcwwwxo &quot;pid %cpu command&quot; | egrep &quot;PID| $1&quot; | grep -v grep | &#39;</span> <span class="o">+</span> <span class="nx">exclude</span> <span class="o">+</span> <span class="s1">&#39; head -7 | tail -6 | awk \&#39;{print &quot;&lt;pid&gt;&quot;$1&quot;&lt;/pid&gt;&lt;cpu&gt;&quot;$2&quot;&lt;/cpu&gt;&lt;name&gt;&quot;$3,$4,$5&quot;&lt;/name&gt;&lt;/item&gt;&quot;}\&#39;&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">){</span> <span class="nx">_self</span><span class="p">.</span><span class="nx">updateProcessesOut</span><span class="p">(</span><span class="nx">data</span><span class="p">);});</span>
+</span><span class='line'>  <span class="k">else</span>
+</span><span class='line'>      <span class="nx">widget</span><span class="p">.</span><span class="nx">system</span><span class="p">(</span><span class="s1">&#39;ps -amcwwwxo &quot;pid rss command&quot;  | egrep &quot;PID| $1&quot; | grep -v grep | &#39;</span> <span class="o">+</span> <span class="nx">exclude</span> <span class="o">+</span> <span class="s1">&#39; head -7 | tail -6 | awk \&#39;{print &quot;&lt;pid&gt;&quot;$1&quot;&lt;/pid&gt;&lt;cpu&gt;&quot;$2&quot;&lt;/cpu&gt;&lt;name&gt;&quot;$3,$4,$5&quot;&lt;/name&gt;&lt;/item&gt;&quot;}\&#39;&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">){</span> <span class="nx">_self</span><span class="p">.</span><span class="nx">updateProcessesOut</span><span class="p">(</span><span class="nx">data</span><span class="p">);});</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<ol>
+<li>Restart the iStat Pro widget and the processes list will be working again!</li>
+</ol>
+
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -811,6 +894,10 @@ try to enter into the synchronized section at a time), but in the old JVMs <code
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2012/08/08/mountain-lion-and-istat-pro/">Mountain Lion and iStat Pro</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2012/03/28/ssh-tunneling/">SSH Tunneling</a>
       </li>
     
@@ -824,10 +911,6 @@ try to enter into the synchronized section at a time), but in the old JVMs <code
     
       <li class="post">
         <a href="/blog/2011/09/29/lock-and-reentrantlock/">Lock and ReentrantLock</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2011/09/28/synchronized-in-java/">Synchronized in Java</a>
       </li>
     
   </ul>

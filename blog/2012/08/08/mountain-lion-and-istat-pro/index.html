@@ -5,12 +5,13 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Shell improvements with Zsh - Frostman's blog</title>
+  <title>Mountain Lion and iStat Pro - Frostman's blog</title>
   <meta name="author" content="Sergey Lukjanov">
 
   
-  <meta name="description" content="First of all, I want to say that the most part of materials for this article I found in the internet.
-This is an agregation of usefull tips for zsh. &hellip;">
+  <meta name="description" content="I&#8217;m using OS X at my MBP as a main operation system and iStat Pro widget
+for Dashboard to monitor temps, processes, etc.
+After upgrading to OS &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -19,7 +20,7 @@ This is an agregation of usefull tips for zsh. &hellip;">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://slukjanov.name/blog/2012/02/07/shell-improvements-with-zsh/">
+  <link rel="canonical" href="http://slukjanov.name/blog/2012/08/08/mountain-lion-and-istat-pro/">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -107,7 +108,7 @@ This is an agregation of usefull tips for zsh. &hellip;">
   
   <header>
     
-      <h1 class="entry-title">Shell Improvements With Zsh</h1>
+      <h1 class="entry-title">Mountain Lion and iStat Pro</h1>
     
     
       <p class="meta">
@@ -123,7 +124,7 @@ This is an agregation of usefull tips for zsh. &hellip;">
   
 
 
-<time datetime="2012-02-07T00:20:00+04:00" pubdate data-updated="true">Feb 7<span>th</span>, 2012</time>
+<time datetime="2012-08-08T19:58:00+04:00" pubdate data-updated="true">Aug 8<span>th</span>, 2012</time>
         
          | <a href="#disqus_thread">Comments</a>
         
@@ -132,82 +133,52 @@ This is an agregation of usefull tips for zsh. &hellip;">
   </header>
 
 
-<div class="entry-content"><p>First of all, I want to say that the most part of materials for this article I found in the internet.
-This is an agregation of usefull tips for zsh.</p>
+<div class="entry-content"><p>I&#8217;m using OS X at my MBP as a main operation system and iStat Pro widget
+for Dashboard to monitor temps, processes, etc.
+After upgrading to OS X 10.8 Mountain Lion the processes section was not working.</p>
 
-<p>Here is my <em>.zshrc</em> file:</p>
+<p>Here is a small instruction to make processes be displayed again.</p>
 
-<div><script src='https://gist.github.com/1754521.js?file='></script>
-<noscript><pre><code>PROMPT='%B%F{green}%n@%m%f:%F{blue}%~%f%b%(!.#.$) '
-
-autoload -U compinit
-compinit
-
-zmodload zsh/complist
-zstyle ':completion:*' menu yes select
-
-export CLICOLOR=1
-export LSCOLORS=exfxcxdxbxegedabagacad
-export LS_COLORS='di=34;40:ln=35;40:so=32;40:pi=33;40:ex=31;40:bd=34;46:cd=34;43:su=0;41:sg=0;46:tw=0;42:ow=0;43:'
-zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
-
-zstyle ':completion:*' use-cache on
-zstyle ':completion:*' cache-path ~/.zsh/cache
-
-setopt AUTO_CD BSD_ECHO
-
-_force_rehash() {
-  (( CURRENT == 1 )) &amp;&amp; rehash
-  return 1
-}
-
-zstyle ':completion:::::' completer _force_rehash _complete
-
-setopt SH_WORD_SPLIT #spaces as in bash
-
-if [ -e $HOME/.ssh/known_hosts ] ; then
-  hosts=(${${${(f)&quot;$(&lt;$HOME/.ssh/known_hosts)&quot;}%%\ *}%%,*})
-  zstyle ':completion:*:hosts' hosts $hosts
-fi
-
-typeset -U path cdpath fpath manpath
-
-autoload -U predict-on
-zle -N predict-on
-zle -N predict-off
-bindkey &quot;^X^Z&quot; predict-on # C-x C-z
-bindkey &quot;^Z&quot; predict-off # C-z
-
-autoload -U zcalc zed
-
-export HISTFILE=~/.zsh_history
-export HISTSIZE=1000
-export SAVEHIST=1000
-setopt APPEND_HISTORY HIST_IGNORE_ALL_DUPS HIST_IGNORE_SPACE HIST_REDUCE_BLANKS
-
-bindkey '^[[3~' delete-char
-bindkey '^E' expand-cmd-path
-
-alias df='df -h'
-alias du='du -sh'
-alias grep='egrep --color=auto'
-alias ll='ls -l'
-</code></pre></noscript></div>
+<ol>
+<li><p>Open iStat Pro widget directory, it is located in <code>~/Library/Widgets/iStat\ Pro.wdgt/</code>
+or <code>/Library/Widgets/iStat\ Pro.wdgt/</code>;</p></li>
+<li><p>If you are using horizontal (wide) widget edit the <code>Wide.js</code> file and if
+vertical (tall) - <code>Tall.js</code>;</p></li>
+<li><p>Find function <code>WideSkinController.prototype.updateProcesses = function(){</code> and
+replace all <code>PID|$1</code> with <code>PID| $1</code> (add space after pipe) in this section. So, you should
+get something like this:</p></li>
+</ol>
 
 
-<p>There are a lot of terminal&#8217;s improvements, such as extended autocompletion and forced rehash.
-I use this configuration at Ubuntu 11.10 and Mac OS X 10.7.3.
-You can activate autocompletion by <em>Tab</em> button and control it by arrow keys.
-It works with files, directories and hosts.</p>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">WideSkinController</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">updateProcesses</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(){</span>
+</span><span class='line'>  <span class="kd">var</span> <span class="nx">_self</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+</span><span class='line'>  <span class="kd">var</span> <span class="nx">exclude</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">;</span>
+</span><span class='line'>  <span class="k">if</span><span class="p">(</span><span class="nx">p</span><span class="p">.</span><span class="nx">v</span><span class="p">(</span><span class="s2">&quot;processes_excludewidgets&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;on&#39;</span><span class="p">)</span>
+</span><span class='line'>      <span class="nx">exclude</span> <span class="o">=</span> <span class="s2">&quot; grep -v DashboardClient | &quot;</span><span class="p">;</span>
+</span><span class='line'>  
+</span><span class='line'>  <span class="k">if</span><span class="p">(</span><span class="nx">p</span><span class="p">.</span><span class="nx">v</span><span class="p">(</span><span class="s2">&quot;processes_sort_mode&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;cpu&#39;</span><span class="p">)</span>
+</span><span class='line'>      <span class="nx">widget</span><span class="p">.</span><span class="nx">system</span><span class="p">(</span><span class="s1">&#39;ps -arcwwwxo &quot;pid %cpu command&quot; | egrep &quot;PID| $1&quot; | grep -v grep | &#39;</span> <span class="o">+</span> <span class="nx">exclude</span> <span class="o">+</span> <span class="s1">&#39; head -7 | tail -6 | awk \&#39;{print &quot;&lt;pid&gt;&quot;$1&quot;&lt;/pid&gt;&lt;cpu&gt;&quot;$2&quot;&lt;/cpu&gt;&lt;name&gt;&quot;$3,$4,$5&quot;&lt;/name&gt;&lt;/item&gt;&quot;}\&#39;&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">){</span> <span class="nx">_self</span><span class="p">.</span><span class="nx">updateProcessesOut</span><span class="p">(</span><span class="nx">data</span><span class="p">);});</span>
+</span><span class='line'>  <span class="k">else</span>
+</span><span class='line'>      <span class="nx">widget</span><span class="p">.</span><span class="nx">system</span><span class="p">(</span><span class="s1">&#39;ps -amcwwwxo &quot;pid rss command&quot;  | egrep &quot;PID| $1&quot; | grep -v grep | &#39;</span> <span class="o">+</span> <span class="nx">exclude</span> <span class="o">+</span> <span class="s1">&#39; head -7 | tail -6 | awk \&#39;{print &quot;&lt;pid&gt;&quot;$1&quot;&lt;/pid&gt;&lt;cpu&gt;&quot;$2&quot;&lt;/cpu&gt;&lt;name&gt;&quot;$3,$4,$5&quot;&lt;/name&gt;&lt;/item&gt;&quot;}\&#39;&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">){</span> <span class="nx">_self</span><span class="p">.</span><span class="nx">updateProcessesOut</span><span class="p">(</span><span class="nx">data</span><span class="p">);});</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
 
-<p>I don&#8217;t have much experience in configuring zsh, but feel free to ask me about something you are intersting in.</p>
 
-<p>P.S. Some screen shots of my terminal:</p>
+<ol>
+<li>Restart the iStat Pro widget and the processes list will be working again!</li>
+</ol>
 
-<p><a href="/downloads/images/screen_shot_1.png"><img src="/downloads/images/screen_shot_1.png"></a>
-<a href="/downloads/images/screen_shot_2.png"><img src="/downloads/images/screen_shot_2.png"></a>
-<a href="/downloads/images/screen_shot_3.png"><img src="/downloads/images/screen_shot_3.png"></a>
-<a href="/downloads/images/screen_shot_4.png"><img src="/downloads/images/screen_shot_4.png"></a></p>
 </div>
 
 
@@ -230,12 +201,12 @@ It works with files, directories and hosts.</p>
   
 
 
-<time datetime="2012-02-07T00:20:00+04:00" pubdate data-updated="true">Feb 7<span>th</span>, 2012</time>
+<time datetime="2012-08-08T19:58:00+04:00" pubdate data-updated="true">Aug 8<span>th</span>, 2012</time>
       
 
 <span class="categories">
   
-    <a class='category' href='/blog/categories/shell/'>Shell</a>, <a class='category' href='/blog/categories/tips/'>Tips</a>, <a class='category' href='/blog/categories/zsh/'>Zsh</a>, <a class='category' href='/blog/categories/nix/'>nix</a>
+    <a class='category' href='/blog/categories/os-x/'>OS X</a>, <a class='category' href='/blog/categories/tips/'>Tips</a>
   
 </span>
 
@@ -244,7 +215,7 @@ It works with files, directories and hosts.</p>
     
       <div class="sharing">
   
-  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://slukjanov.name/blog/2012/02/07/shell-improvements-with-zsh/" data-via="" data-counturl="http://slukjanov.name/blog/2012/02/07/shell-improvements-with-zsh/" >Tweet</a>
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://slukjanov.name/blog/2012/08/08/mountain-lion-and-istat-pro/" data-via="" data-counturl="http://slukjanov.name/blog/2012/08/08/mountain-lion-and-istat-pro/" >Tweet</a>
   
   
   
@@ -253,10 +224,8 @@ It works with files, directories and hosts.</p>
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/blog/2011/09/29/html5-slides/" title="Previous Post: HTML5 Slides">&laquo; HTML5 Slides</a>
+        <a class="basic-alignment left" href="/blog/2012/03/28/ssh-tunneling/" title="Previous Post: SSH Tunneling">&laquo; SSH Tunneling</a>
       
-      
-        <a class="basic-alignment right" href="/blog/2012/03/28/ssh-tunneling/" title="Next Post: SSH Tunneling">SSH Tunneling &raquo;</a>
       
     </p>
   </footer>
@@ -309,7 +278,7 @@ It works with files, directories and hosts.</p>
 </section>
 <section>
 <h1>QR-Code<abbr title="The word 'QR Code' is a registered trademark of DENSO WAVE INCORPORATED. It applies only for the word 'QR Code', not for image.">&trade;</abbr></h1>
-<a href="http://slukjanov.name/blog/2012/02/07/shell-improvements-with-zsh/"><img src="http://chart.apis.google.com/chart?chs=150x150&cht=qr&chld=|0&chco=165B94&chl=http://slukjanov.name/blog/2012/02/07/shell-improvements-with-zsh/" alt="post-qrcode"></a></section>
+<a href="http://slukjanov.name/blog/2012/08/08/mountain-lion-and-istat-pro/"><img src="http://chart.apis.google.com/chart?chs=150x150&cht=qr&chld=|0&chco=165B94&chl=http://slukjanov.name/blog/2012/08/08/mountain-lion-and-istat-pro/" alt="post-qrcode"></a></section>
 
   
 </aside>
@@ -330,8 +299,8 @@ It works with files, directories and hosts.</p>
       
         
         // var disqus_developer = 1;
-        var disqus_identifier = 'http://slukjanov.name/blog/2012/02/07/shell-improvements-with-zsh/';
-        var disqus_url = 'http://slukjanov.name/blog/2012/02/07/shell-improvements-with-zsh/';
+        var disqus_identifier = 'http://slukjanov.name/blog/2012/08/08/mountain-lion-and-istat-pro/';
+        var disqus_url = 'http://slukjanov.name/blog/2012/08/08/mountain-lion-and-istat-pro/';
         var disqus_script = 'embed.js';
       
     (function () {
