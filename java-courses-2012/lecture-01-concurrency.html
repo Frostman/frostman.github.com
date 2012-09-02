@@ -1,0 +1,403 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Frostman's blog</title>
+  <meta name="author" content="Sergey Lukjanov">
+
+  
+  <meta name="description" content="Mirantis Java advanced course 2012 Lecture 01. Concurrency basics План / тезисы Писать корректно работающие приложения тяжело.
+Писать корректно &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://slukjanov.name/java-courses-2012/lecture-01-concurrency.html">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="http://feeds.feedburner.com/slukjanov" rel="alternate" title="Frostman's blog" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet"
+      type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet"
+      type="text/css">
+
+<script src="/assets/jquery-1.7.2.min.js" type="text/javascript"></script>
+<script type="text/javascript">
+    var $j = jQuery.noConflict();
+</script>
+<link href="/assets/fancybox/jquery.fancybox.css?v=2.0.5" media="screen" rel="stylesheet" type="text/css">
+<script src="/assets/fancybox/jquery.fancybox.pack.js?v=2.0.5" type="text/javascript"></script>
+<script type="text/javascript">
+    if (!/android|iphone|ipod|ipad/i.test(navigator.userAgent)) {
+        $j(document).ready(function () {
+            $j('a[href$=".png"],a[href$=".jpg"],a[href$=".jpeg"],a[href$=".gif"]')
+                    .fancybox({
+                        closeClick:'true',
+                        openEffect:'elastic',
+                        closeEffect:'elastic'
+                    })
+        });
+    }
+</script>
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-25396023-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body    class="collapse-sidebar sidebar-footer" >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Frostman's blog</a></h1>
+  
+    <h2>Blog about programming and techs</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss email">
+  <li><a href="http://feeds.feedburner.com/slukjanov" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+    <li><a href="http://feedburner.google.com/fb/a/mailverify?uri=slukjanov" rel="subscribe-email" title="subscribe via email">Email</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:slukjanov.name" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/about">About me</a></li>
+  <li><a href="https://github.com/Frostman">Github</a></li>
+  <li><a href="https://twitter.com/lukjanovsv">Twitter</a></li>
+  <li><a href="mailto:blog@slukjanov.name">Mail</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article role="article">
+  
+  <h2>Mirantis Java advanced course 2012</h2>
+
+<h2>Lecture 01. Concurrency basics</h2>
+
+<h2>План / тезисы</h2>
+
+<p>Писать корректно работающие приложения тяжело.
+Писать корректно работающие многопоточные приложения значительно сложнее.
+Поглядеть на введение в конкарренси ин практиз.</p>
+
+<h3>Зачем нужна многопоточность?</h3>
+
+<ul>
+<li>увеличение утилизации ресурсов;</li>
+<li>растет число ядер, а не их частота;</li>
+<li>асинхронность;</li>
+<li>отзывчивость интерфейсов;</li>
+<li>распараллеливание разных ресурсов (io и cpu или net и cpu).</li>
+</ul>
+
+
+<h3>Проблемы</h3>
+
+<ul>
+<li>сложно тестировать;</li>
+<li>синхронизация;</li>
+<li>специфичные проблемы (deadlocks, livelocks, data races);</li>
+<li>safety hazards (non-thread-safe sequence generator).</li>
+</ul>
+
+
+<h3>Работа с многопоточностью</h3>
+
+<ul>
+<li>заложена в спецификации языка Java;</li>
+<li>синтаксические конструкции;</li>
+<li>четко определённая семантика;</li>
+<li>пакет <code>java.util.concurent</code>;</li>
+<li>спецификация Java Memory Model, которая описывает, при каких условиях поток увидит изменения сделанные другим потоком.</li>
+</ul>
+
+
+<h3>Работа с потоками</h3>
+
+<ul>
+<li>как создать и запустить поток;</li>
+<li>потоки-демоны;</li>
+<li>приоритеты потоков, перезапуск потоков;</li>
+<li>как получить ссылку на текущий поток;</li>
+<li>остановка и приостановка потоков deprecated;</li>
+<li>состояния потоков (NEW, RUNNABLE, BLOCKED, WAITING, TIMED_WAITING, TERMINATED);</li>
+<li>ключевое слово <code>synchronized</code> на метод/блок/статик метод, при этом происходит захват монитора (монитор неявно ассоциируется со всеми объектами);</li>
+<li>методы <code>Thread.sleep()</code>, <code>Thread.yield()</code>,  <code>Thread#join()</code>;</li>
+<li>ключевое слово <code>volatile</code>;</li>
+<li><code>synchronized</code> и <code>volatile</code> также нужны чтобы потоки могли видеть изменения сделанные другими потоками (необходимо для дз, также рассказать про скорость выполнения volatile read на x86).  Поэтому синхронизацию нельзя использовать только для записи;</li>
+<li>методы <code>Object#wait()</code>, <code>Object#notify()</code>, <code>Object#notifyAll()</code>. При вызове <code>notify()</code> просыпается случайный поток. При вызове <code>wait()</code> отпускается монитор, захваченный текущим потоком, при вызове <code>sleep()</code> и <code>join()</code> – нет;</li>
+<li><code>IllegalMonitorStateException</code> при вызове вышеперечисленных методов у объекта, чьим монитором мы не владеем;</li>
+<li>случайные пробуждения (Spurious wakeup).  Поэтому метод <code>wait()</code> нужно звать только в цикле с проверкой условия;</li>
+<li><code>InterruptedException</code>. Просьба прервать поток;</li>
+<li>Deadlocks;</li>
+<li>разница <code>StringBuffer</code> / <code>StringBuilder</code>, <code>Vector</code> / <code>ArrayList</code>.</li>
+</ul>
+
+
+<p>Может быть стоит рассказать студентам про <code>ForkJoinPool</code> в кратце. например на втором занятие в конце и дать задание. Можно попробовать дать задачку на распараллеливание типа проверки правильности скобочной последовательности.</p>
+
+<h2>Практической задание (сделать на занятии)</h2>
+
+<p>Реализовать: семафор, барьер, пул потоков.</p>
+
+<h2>Домашнее задание</h2>
+
+<p><em>Note.</em> Все решения должны быть thread-safe.</p>
+
+<h3>Задание #1</h3>
+
+<p>Первое задание теоретическое. Ответ на каждый вопрос должен занимать 1-2 предложения.</p>
+
+<ol>
+<li>Как получить ссылку на текущий поток?</li>
+<li>Зачем нужно ключевое слово <code>synchronized</code>? На что его можно повесить (поле, метод, класс, конструктор и тд)?</li>
+<li>Захват какого монитора происходит при входе в <code>synchronized</code> метод / статический метод / блок кода?</li>
+<li>Зачем нужно ключевое слово <code>volatile</code>? На что его можно повесить (поле, метод, класс, конструктор и тд)?</li>
+<li>Что делают методы <code>Object#wait()</code>, <code>Object#notify()</code>, <code>Object#notifyAll()</code>?</li>
+<li>Когда бросается исключение <code>IllegalMonitorStateException</code>?</li>
+<li>Что делает метод <code>Thread#join()</code>?</li>
+<li>Что делает метод <code>Thread#interrupt()</code>?</li>
+</ol>
+
+
+<p>Мб стоит использовать google forms для сбора ответов для удобства.</p>
+
+<h3>Задание #2</h3>
+
+<p>Ваша задача заключается в создании двух реализаций интерфейса <code>Task</code>:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">Task</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="o">{</span>
+</span><span class='line'>    <span class="n">T</span> <span class="nf">get</span><span class="o">()</span> <span class="kd">throws</span> <span class="n">MyException</span><span class="o">;</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Замените название <code>MyException</code> на более подходящее. В это исключение должны оборачиваться исключения
+(в любой из реализаций интерфейса <code>Task</code>), возникшие во время исполнения задачи,
+и оно должно быть выброшено всем потокам, которые вызывают <code>get()</code>.</p>
+
+<p>Первая реализация - <code>SimpleTask</code> должна иметь следующий вид:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="kn">import</span> <span class="nn">java.util.concurrent.Callable</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">public</span> <span class="kd">final</span> <span class="kd">class</span> <span class="nc">SimpleTask</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="kd">implements</span> <span class="n">Task</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="o">{</span>
+</span><span class='line'>    <span class="c1">// ...</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="kd">public</span> <span class="nf">SimpleTask</span><span class="o">(</span><span class="n">Callable</span><span class="o">&lt;?</span> <span class="kd">extends</span> <span class="n">T</span><span class="o">&gt;</span> <span class="n">callable</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>        <span class="c1">// ...</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="kd">public</span> <span class="n">T</span> <span class="nf">get</span><span class="o">()</span> <span class="kd">throws</span> <span class="n">MyException</span> <span class="o">{</span>
+</span><span class='line'>        <span class="c1">// ...</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Метод <code>get()</code> должен возвращать результат выполнения <code>callable</code> или бросать обернутое исключение,
+произошедшее во время выполнения. Если при вызове get() результат уже просчитан, то он должен вернуться сразу
+(даже без задержек на вход в синхронизированную область, справедливо для всех реализаций).
+Вычисление значения (выполнение <code>callable</code>) должно происходить только один раз - в конструкторе.
+<code>Callable</code> похож на <code>Runnuble</code>, но результатом его работы является объект (а не <code>void</code>).</p>
+
+<p>Далее необходимо реализовать лениво вычисляющийся <code>LazyTask</code>, имеющий такой же вид как и <code>SimpleTask</code>,
+но вычисление значения (выполнение <code>callable</code>) должно происходить только при первом обращении к <code>get()</code>
+(в потоке который совершил первый вызов и только один раз).</p>
+
+<h3>Задание #3</h3>
+
+<p>Ваша задача реализовать интерфейс <code>ExecutionManager</code>:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">ExecutionManager</span> <span class="o">{</span>
+</span><span class='line'>    <span class="n">Context</span> <span class="nf">execute</span><span class="o">(</span><span class="n">Runnable</span> <span class="n">callback</span><span class="o">,</span> <span class="n">Runnable</span><span class="o">...</span> <span class="n">tasks</span><span class="o">);</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Метод <code>execute()</code> принимает массив tasks, это задания которые <code>ExecutionManager</code> должен выполнять параллельно
+(в вашей реализации это должно происходить в своем пуле потоков).
+После завершения исполнения всех заданий должен выполниться <code>callback</code> (ровно 1 раз).</p>
+
+<p>Метод <code>execute()</code> – это неблокирующий метод, который сразу возвращает объект <code>Context</code>.
+<code>Context</code> - это интерфейс следующего вида:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">Context</span> <span class="o">{</span>
+</span><span class='line'>    <span class="kt">int</span> <span class="nf">getCompletedTaskCount</span><span class="o">();</span>
+</span><span class='line'>    <span class="kt">int</span> <span class="nf">getFailedTaskCount</span><span class="o">();</span>
+</span><span class='line'>    <span class="kt">int</span> <span class="nf">getInterruptedTaskCount</span><span class="o">();</span>
+</span><span class='line'>    <span class="kt">void</span> <span class="nf">interrupt</span><span class="o">();</span>
+</span><span class='line'>    <span class="kt">boolean</span> <span class="nf">isFinished</span><span class="o">();</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Описание поведения методов:</p>
+
+<ul>
+<li><code>getCompletedTaskCount()</code> должен возвращать количество заданий, которые на текущий момент успешно выполнились;</li>
+<li><code>getFailedTaskCount()</code> должен возвращать количество заданий, при выполнении которых было выброшено исключение;</li>
+<li><code>interrupt()</code> должен отменять выполнения заданий, которые еще не начали выполняться;</li>
+<li><code>getInterruptedTaskCount()</code> должен возвращать количество заданий, которые не были выполены из-за отмены (вызовом предыдущего метода);</li>
+<li><code>isFinished()</code> должен возвращать <code>true</code>, если все таски были выполнены или отменены, <code>false</code> в противном случае.</li>
+</ul>
+
+
+<p>Далее можно развить и/или объединить эти задания чтобы они стали частью следующего задания.</p>
+
+<h2>Общие мысли по практических занятиям.</h2>
+
+<ul>
+<li>гит репозиторий для каждого задания (бранчи) с заготовками (интерфейсами и тестами)</li>
+<li>задания сдавать в виде ссылок на репозиторий на гитхабе (посоветоваться с Герой)</li>
+<li>обязательно использовать мавен</li>
+</ul>
+
+
+  
+    <footer>
+      
+      
+    </footer>
+  
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>About Me</h1>
+  <p>
+	My name is Sergey Lukjanov.
+	I am software engineer from Russia.
+	I am interesting in Java, Kotlin, Scala, Groovy, JavaScript, NIO, Concurrency and many other langs/tools/libs.
+  </p>
+</section>
+
+<section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2012/08/08/mountain-lion-and-istat-pro/">Mountain Lion and iStat Pro</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/03/28/ssh-tunneling/">SSH Tunneling</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/02/07/shell-improvements-with-zsh/">Shell improvements with Zsh</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2011/09/29/html5-slides/">HTML5 Slides</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2011/09/29/lock-and-reentrantlock/">Lock and ReentrantLock</a>
+      </li>
+    
+  </ul>
+</section>
+<section>
+<h1>QR-Code<abbr title="The word 'QR Code' is a registered trademark of DENSO WAVE INCORPORATED. It applies only for the word 'QR Code', not for image.">&trade;</abbr></h1>
+<a href="http://slukjanov.name/java-courses-2012/lecture-01-concurrency.html"><img src="http://chart.apis.google.com/chart?chs=150x150&cht=qr&chld=|0&chco=165B94&chl=http://slukjanov.name/java-courses-2012/lecture-01-concurrency.html" alt="post-qrcode"></a></section>
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2012 - Sergey Lukjanov -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>
