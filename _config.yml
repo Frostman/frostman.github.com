@@ -98,4 +98,4 @@ disqus_show_comment_count: true
 google_analytics_tracking_id: "UA-25396023-1"
 
 # Facebook Like
-facebook_like: false
+facebook_like: true
