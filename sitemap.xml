@@ -49,11 +49,19 @@
         <lastmod>2012-09-16T19:13:00+04:00</lastmod>
     </url>
     <url>
-        <loc>http://slukjanov.name/java-courses-2012/</loc>
-        <lastmod>2012-09-16T19:13:00+04:00</lastmod>
+        <loc>http://slukjanov.name/java-courses-2012/hw-requirements.html</loc>
+        <lastmod>2012-09-24T00:14:02+04:00</lastmod>
     </url>
     <url>
-        <loc>http://slukjanov.name/java-courses-2012/lecture-01-concurrency.html</loc>
-        <lastmod>2012-09-16T19:13:00+04:00</lastmod>
+        <loc>http://slukjanov.name/java-courses-2012/</loc>
+        <lastmod>2012-09-24T00:18:18+04:00</lastmod>
+    </url>
+    <url>
+        <loc>http://slukjanov.name/java-courses-2012/lecture-01-jvm.html</loc>
+        <lastmod>2012-09-24T00:22:38+04:00</lastmod>
+    </url>
+    <url>
+        <loc>http://slukjanov.name/java-courses-2012/lecture-02-concurrency.html</loc>
+        <lastmod>2012-09-24T00:14:31+04:00</lastmod>
     </url>
 </urlset>
