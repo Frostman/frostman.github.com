@@ -10,7 +10,7 @@ footer: false
 Author: Sergey Lukjanov ([Frostman](https://github.com/Frostman/ "Frostman at github.com"))
 
 Contacts: [slukjanov@mirantis.com](mailto:slukjanov@mirantis.com?subject=jc12%20Ivan%20Ivanov),
- [me@slukjanov.name](mailto:me@slukjanov.name?subject=jc12%20Ivan%Ivanov).
+ [me@slukjanov.name](mailto:me@slukjanov.name?subject=jc12%20Ivan%20Ivanov).
 
 Please, specify `jc12` and your name in subject, for example: `jc12 Ivan Ivanov`.
 
