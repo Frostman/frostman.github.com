@@ -1,6 +1,6 @@
 ---                                                                                                                     
 layout: page                                                                                                            
-title:                                                                                                                  
+title: JC12 - Lecture 01. JVM bytecode and instrumentation                                                                                                                 
 comments: false                                                                                                         
 sharing: false                                                                                                          
 sidebar: collapse
@@ -51,13 +51,15 @@ public class Example {
 
 Репозиторий с примерами: [github.com/Frostman/jc12-01](https://github.com/Frostman/jc12-01)
 
+Javassist tutorial: [http://www.csg.ci.i.u-tokyo.ac.jp/~chiba/javassist/tutorial/tutorial.html](http://www.csg.ci.i.u-tokyo.ac.jp/~chiba/javassist/tutorial/tutorial.html)
+
 ## Практическое задание (на занятии) #2 / Домашнее задание
 
 Необходимо написать небольшую библиотеку, позволяющую кешировать вызовы методов.
 Она должна предоставлять два способа декларировать кеширование:
 
 1. аннотация `@Cache(key, maxEntriesForKey, ttl)`;
-2. helper-метод `CallCache.instrumentMethod(className, methodSignature, key, maxEntriesForKey)`.
+2. helper-метод `CallCache.instrumentMethod(className, methodSignature, key, maxEntriesForKey, ttl)`.
 
 Где:
 
