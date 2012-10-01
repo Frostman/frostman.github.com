@@ -5,12 +5,11 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Frostman's blog</title>
+  <title>JC12 - Lecture 03. Concurrency basics - Frostman's blog</title>
   <meta name="author" content="Sergey Lukjanov">
 
   
-  <meta name="description" content="Mirantis Java Course 2012 (back) Lecture 02. Concurrency basics План / тезисы Писать корректно работающие приложения тяжело.
-Писать корректно &hellip;">
+  <meta name="description" content="JC12 - Lecture 03. Concurrency Basics Mirantis Java Course 2012 (back) Lecture 03. Concurrency basics План / тезисы Писать корректно работающие &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -19,7 +18,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://slukjanov.name/java-courses-2012/lecture-02-concurrency.html">
+  <link rel="canonical" href="http://slukjanov.name/java-courses-2012/lecture-03-concurrency.html">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -107,15 +106,19 @@
       <div>
 <article role="article">
   
+  <header>
+    <h1 class="entry-title">JC12 - Lecture 03. Concurrency Basics</h1>
+    
+  </header>
+  
   <h2><a href="http://www.mirantis.com">Mirantis</a> Java Course 2012 (<a href="index.html">back</a>)</h2>
 
-<h2>Lecture 02. Concurrency basics</h2>
+<h2>Lecture 03. Concurrency basics</h2>
 
 <h2>План / тезисы</h2>
 
 <p>Писать корректно работающие приложения тяжело.
-Писать корректно работающие многопоточные приложения значительно сложнее.
-Поглядеть на введение в конкарренси ин практиз.</p>
+Писать корректно работающие многопоточные приложения значительно сложнее.</p>
 
 <h3>Зачем нужна многопоточность?</h3>
 
@@ -158,20 +161,18 @@
 <li>как получить ссылку на текущий поток;</li>
 <li>остановка и приостановка потоков deprecated;</li>
 <li>состояния потоков (NEW, RUNNABLE, BLOCKED, WAITING, TIMED_WAITING, TERMINATED);</li>
-<li>ключевое слово <code>synchronized</code> на метод/блок/статик метод, при этом происходит захват монитора (монитор неявно ассоциируется со всеми объектами);</li>
+<li>ключевое слово <code>synchronized</code> на метод/блок/статик метод, при этом происходит захват монитора;</li>
 <li>методы <code>Thread.sleep()</code>, <code>Thread.yield()</code>,  <code>Thread#join()</code>;</li>
 <li>ключевое слово <code>volatile</code>;</li>
-<li><code>synchronized</code> и <code>volatile</code> также нужны чтобы потоки могли видеть изменения сделанные другими потоками (необходимо для дз, также рассказать про скорость выполнения volatile read на x86).  Поэтому синхронизацию нельзя использовать только для записи;</li>
-<li>методы <code>Object#wait()</code>, <code>Object#notify()</code>, <code>Object#notifyAll()</code>. При вызове <code>notify()</code> просыпается случайный поток. При вызове <code>wait()</code> отпускается монитор, захваченный текущим потоком, при вызове <code>sleep()</code> и <code>join()</code> – нет;</li>
+<li><code>synchronized</code> и <code>volatile</code> также нужны чтобы потоки могли видеть изменения сделанные другими потоками (синхронизацию нельзя использовать только для записи);</li>
+<li>методы <code>Object#wait()</code>, <code>Object#notify()</code>, <code>Object#notifyAll()</code>, при вызове <code>notify()</code> просыпается случайный поток, при вызове <code>wait()</code> отпускается монитор, захваченный текущим потоком, при вызове <code>sleep()</code> и <code>join()</code> – нет;</li>
 <li><code>IllegalMonitorStateException</code> при вызове вышеперечисленных методов у объекта, чьим монитором мы не владеем;</li>
-<li>случайные пробуждения (Spurious wakeup).  Поэтому метод <code>wait()</code> нужно звать только в цикле с проверкой условия;</li>
+<li>случайные пробуждения (Spurious wakeup), поэтому метод <code>wait()</code> нужно звать только в цикле с проверкой условия;</li>
 <li><code>InterruptedException</code>. Просьба прервать поток;</li>
 <li>Deadlocks;</li>
 <li>разница <code>StringBuffer</code> / <code>StringBuilder</code>, <code>Vector</code> / <code>ArrayList</code>.</li>
 </ul>
 
-
-<p>Может быть стоит рассказать студентам про <code>ForkJoinPool</code> в кратце. например на втором занятие в конце и дать задание. Можно попробовать дать задачку на распараллеливание типа проверки правильности скобочной последовательности.</p>
 
 <h2>Практической задание (сделать на занятии)</h2>
 
@@ -307,12 +308,10 @@
 
 <p>Далее можно развить и/или объединить эти задания чтобы они стали частью следующего задания.</p>
 
-<h2>Общие мысли по практических занятиям.</h2>
+<h2>Общие мысли</h2>
 
 <ul>
-<li>гит репозиторий для каждого задания (бранчи) с заготовками (интерфейсами и тестами)</li>
-<li>задания сдавать в виде ссылок на репозиторий на гитхабе</li>
-<li>обязательно использовать мавен</li>
+<li>Может быть стоит рассказать студентам про <code>ForkJoinPool</code> в кратце. например на втором занятие в конце и дать задание. Можно попробовать дать задачку на распараллеливание типа проверки правильности скобочной последовательности.</li>
 </ul>
 
 
@@ -360,7 +359,7 @@
 </section>
 <section>
 <h1>QR-Code<abbr title="The word 'QR Code' is a registered trademark of DENSO WAVE INCORPORATED. It applies only for the word 'QR Code', not for image.">&trade;</abbr></h1>
-<a href="http://slukjanov.name/java-courses-2012/lecture-02-concurrency.html"><img src="http://chart.apis.google.com/chart?chs=150x150&cht=qr&chld=|0&chco=165B94&chl=http://slukjanov.name/java-courses-2012/lecture-02-concurrency.html" alt="post-qrcode"></a></section>
+<a href="http://slukjanov.name/java-courses-2012/lecture-03-concurrency.html"><img src="http://chart.apis.google.com/chart?chs=150x150&cht=qr&chld=|0&chco=165B94&chl=http://slukjanov.name/java-courses-2012/lecture-03-concurrency.html" alt="post-qrcode"></a></section>
 
   
 </aside>

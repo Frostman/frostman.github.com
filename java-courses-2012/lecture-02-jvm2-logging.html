@@ -1,0 +1,541 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>JC12 - Lecture 01. JVM bytecode and instrumentation - Frostman's blog</title>
+  <meta name="author" content="Sergey Lukjanov">
+
+  
+  <meta name="description" content="JC12 - Lecture 01. JVM Bytecode and Instrumentation Mirantis Java Сourse 2012 (back) Lecture 02. JVM bytecode and instrumentation #2 and logging &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://slukjanov.name/java-courses-2012/lecture-02-jvm2-logging.html">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="http://feeds.feedburner.com/slukjanov" rel="alternate" title="Frostman's blog" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet"
+      type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet"
+      type="text/css">
+
+<script src="/assets/jquery-1.7.2.min.js" type="text/javascript"></script>
+<script type="text/javascript">
+    var $j = jQuery.noConflict();
+</script>
+<link href="/assets/fancybox/jquery.fancybox.css?v=2.0.5" media="screen" rel="stylesheet" type="text/css">
+<script src="/assets/fancybox/jquery.fancybox.pack.js?v=2.0.5" type="text/javascript"></script>
+<script type="text/javascript">
+    if (!/android|iphone|ipod|ipad/i.test(navigator.userAgent)) {
+        $j(document).ready(function () {
+            $j('a[href$=".png"],a[href$=".jpg"],a[href$=".jpeg"],a[href$=".gif"]')
+                    .fancybox({
+                        closeClick:'true',
+                        openEffect:'elastic',
+                        closeEffect:'elastic'
+                    })
+        });
+    }
+</script>
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-25396023-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body    class="collapse-sidebar sidebar-footer" >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Frostman's blog</a></h1>
+  
+    <h2>Blog about programming and techs</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss email">
+  <li><a href="http://feeds.feedburner.com/slukjanov" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+    <li><a href="http://feedburner.google.com/fb/a/mailverify?uri=slukjanov" rel="subscribe-email" title="subscribe via email">Email</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:slukjanov.name" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/about">About me</a></li>
+  <li><a href="https://github.com/Frostman">Github</a></li>
+  <li><a href="https://twitter.com/lukjanovsv">Twitter</a></li>
+  <li><a href="mailto:blog@slukjanov.name">Mail</a></li>
+  <li><a href="/contact-me/index.html">Contact me</a></li>
+  <li><a href="/java-courses-2012/index.html">Mirantis Courses (RU)</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article role="article">
+  
+  <header>
+    <h1 class="entry-title">JC12 - Lecture 01. JVM Bytecode and Instrumentation</h1>
+    
+  </header>
+  
+  <h2><a href="http://www.mirantis.com">Mirantis</a> Java Сourse 2012 (<a href="index.html">back</a>)</h2>
+
+<h2>Lecture 02. JVM bytecode and instrumentation #2 and logging</h2>
+
+<h2>Разбор домашнего задания</h2>
+
+<p>Задание на реализацию <code>@Cache</code> из первой лекции <a href="lecture-01-jvm.html">JVM bytecode and instrumentation #1</a>.</p>
+
+<h2>Логирование в Java</h2>
+
+<ul>
+<li>зачем нужно логирование;</li>
+<li>чем пользоваться;</li>
+<li>как пользоваться.</li>
+</ul>
+
+
+<h3>Log4J</h3>
+
+<p>На данный момент это самый популярный фреймворк для логирования на платформе Java.
+Log4J обладает очень простым API:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="kn">package</span> <span class="n">org</span><span class="o">.</span><span class="na">apache</span><span class="o">.</span><span class="na">log4j</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="kd">public</span> <span class="kd">class</span> <span class="nc">Logger</span> <span class="o">{</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// Creation &amp; retrieval methods:</span>
+</span><span class='line'>    <span class="kd">public</span> <span class="kd">static</span> <span class="n">Logger</span> <span class="nf">getRootLogger</span><span class="o">();</span>
+</span><span class='line'>    <span class="kd">public</span> <span class="kd">static</span> <span class="n">Logger</span> <span class="nf">getLogger</span><span class="o">(</span><span class="n">String</span> <span class="n">name</span><span class="o">);</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// printing methods:</span>
+</span><span class='line'>    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">trace</span><span class="o">(</span><span class="n">Object</span> <span class="n">message</span><span class="o">);</span>
+</span><span class='line'>    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">debug</span><span class="o">(</span><span class="n">Object</span> <span class="n">message</span><span class="o">);</span>
+</span><span class='line'>    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">info</span><span class="o">(</span><span class="n">Object</span> <span class="n">message</span><span class="o">);</span>
+</span><span class='line'>    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">warn</span><span class="o">(</span><span class="n">Object</span> <span class="n">message</span><span class="o">);</span>
+</span><span class='line'>    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">error</span><span class="o">(</span><span class="n">Object</span> <span class="n">message</span><span class="o">);</span>
+</span><span class='line'>    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">fatal</span><span class="o">(</span><span class="n">Object</span> <span class="n">message</span><span class="o">);</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// generic printing method:</span>
+</span><span class='line'>    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">log</span><span class="o">(</span><span class="n">Level</span> <span class="n">l</span><span class="o">,</span> <span class="n">Object</span> <span class="n">message</span><span class="o">);</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Каждый логгер имеет собственное имя, которое может иметь форму &#8220;package.of.my.class.MyClass&#8221;,
+тогда настройки логирования определенные для пакета, в который вложен логгер, будут унаследованны.
+Так же для каждого логгера задается собственный уровень логирования.</p>
+
+<p>Уровни логирования в порядке возрастания &#8220;важности&#8221;:</p>
+
+<ul>
+<li><code>TRACE</code>;</li>
+<li><code>DEBUG</code>;</li>
+<li><code>INFO</code>;</li>
+<li><code>WARN</code>;</li>
+<li><code>ERROR</code>;</li>
+<li><code>FATAL</code>.</li>
+</ul>
+
+
+<p>Пример использования логгеров:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'>   <span class="c1">// get a logger instance named &quot;com.foo&quot;</span>
+</span><span class='line'>   <span class="n">Logger</span>  <span class="n">logger</span> <span class="o">=</span> <span class="n">Logger</span><span class="o">.</span><span class="na">getLogger</span><span class="o">(</span><span class="s">&quot;com.foo&quot;</span><span class="o">);</span>
+</span><span class='line'>
+</span><span class='line'>   <span class="c1">// Now set its level. Normally you do not need to set the</span>
+</span><span class='line'>   <span class="c1">// level of a logger programmatically. This is usually done</span>
+</span><span class='line'>   <span class="c1">// in configuration files.</span>
+</span><span class='line'>   <span class="n">logger</span><span class="o">.</span><span class="na">setLevel</span><span class="o">(</span><span class="n">Level</span><span class="o">.</span><span class="na">INFO</span><span class="o">);</span>
+</span><span class='line'>
+</span><span class='line'>   <span class="n">Logger</span> <span class="n">barlogger</span> <span class="o">=</span> <span class="n">Logger</span><span class="o">.</span><span class="na">getLogger</span><span class="o">(</span><span class="s">&quot;com.foo.Bar&quot;</span><span class="o">);</span>
+</span><span class='line'>
+</span><span class='line'>   <span class="c1">// This request is enabled, because WARN &gt;= INFO.</span>
+</span><span class='line'>   <span class="n">logger</span><span class="o">.</span><span class="na">warn</span><span class="o">(</span><span class="s">&quot;Low fuel level.&quot;</span><span class="o">);</span>
+</span><span class='line'>
+</span><span class='line'>   <span class="c1">// This request is disabled, because DEBUG &lt; INFO.</span>
+</span><span class='line'>   <span class="n">logger</span><span class="o">.</span><span class="na">debug</span><span class="o">(</span><span class="s">&quot;Starting search for nearest gas station.&quot;</span><span class="o">);</span>
+</span><span class='line'>
+</span><span class='line'>   <span class="c1">// The logger instance barlogger, named &quot;com.foo.Bar&quot;,</span>
+</span><span class='line'>   <span class="c1">// will inherit its level from the logger named</span>
+</span><span class='line'>   <span class="c1">// &quot;com.foo&quot; Thus, the following request is enabled</span>
+</span><span class='line'>   <span class="c1">// because INFO &gt;= INFO.</span>
+</span><span class='line'>   <span class="n">barlogger</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">&quot;Located nearest gas station.&quot;</span><span class="o">);</span>
+</span><span class='line'>
+</span><span class='line'>   <span class="c1">// This request is disabled, because DEBUG &lt; INFO.</span>
+</span><span class='line'>   <span class="n">barlogger</span><span class="o">.</span><span class="na">debug</span><span class="o">(</span><span class="s">&quot;Exiting gas station search&quot;</span><span class="o">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Примеры конфигураций log4j (log4j.properties):</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="err">#</span> <span class="n">Set</span> <span class="n">root</span> <span class="n">logger</span> <span class="n">level</span> <span class="n">to</span> <span class="n">DEBUG</span> <span class="n">and</span> <span class="n">its</span> <span class="n">only</span> <span class="n">appender</span> <span class="n">to</span> <span class="n">A1</span><span class="o">.</span>
+</span><span class='line'><span class="n">log4j</span><span class="o">.</span><span class="na">rootLogger</span><span class="o">=</span><span class="n">DEBUG</span><span class="o">,</span> <span class="n">A1</span>
+</span><span class='line'>
+</span><span class='line'><span class="err">#</span> <span class="n">A1</span> <span class="n">is</span> <span class="n">set</span> <span class="n">to</span> <span class="n">be</span> <span class="n">a</span> <span class="n">ConsoleAppender</span><span class="o">.</span>
+</span><span class='line'><span class="n">log4j</span><span class="o">.</span><span class="na">appender</span><span class="o">.</span><span class="na">A1</span><span class="o">=</span><span class="n">org</span><span class="o">.</span><span class="na">apache</span><span class="o">.</span><span class="na">log4j</span><span class="o">.</span><span class="na">ConsoleAppender</span>
+</span><span class='line'>
+</span><span class='line'><span class="err">#</span> <span class="n">A1</span> <span class="n">uses</span> <span class="n">PatternLayout</span><span class="o">.</span>
+</span><span class='line'><span class="n">log4j</span><span class="o">.</span><span class="na">appender</span><span class="o">.</span><span class="na">A1</span><span class="o">.</span><span class="na">layout</span><span class="o">=</span><span class="n">org</span><span class="o">.</span><span class="na">apache</span><span class="o">.</span><span class="na">log4j</span><span class="o">.</span><span class="na">PatternLayout</span>
+</span><span class='line'><span class="n">log4j</span><span class="o">.</span><span class="na">appender</span><span class="o">.</span><span class="na">A1</span><span class="o">.</span><span class="na">layout</span><span class="o">.</span><span class="na">ConversionPattern</span><span class="o">=%-</span><span class="mi">4</span><span class="n">r</span> <span class="o">[%</span><span class="n">t</span><span class="o">]</span> <span class="o">%-</span><span class="mi">5</span><span class="n">p</span> <span class="o">%</span><span class="n">c</span> <span class="o">%</span><span class="n">x</span> <span class="o">-</span> <span class="o">%</span><span class="n">m</span><span class="o">%</span><span class="n">n</span>
+</span><span class='line'>
+</span><span class='line'><span class="err">#</span> <span class="n">Print</span> <span class="n">only</span> <span class="n">messages</span> <span class="n">of</span> <span class="n">level</span> <span class="n">WARN</span> <span class="n">or</span> <span class="n">above</span> <span class="n">in</span> <span class="n">the</span> <span class="kn">package</span> <span class="n">com</span><span class="o">.</span><span class="na">foo</span><span class="o">.</span>
+</span><span class='line'><span class="n">log4j</span><span class="o">.</span><span class="na">logger</span><span class="o">.</span><span class="na">com</span><span class="o">.</span><span class="na">foo</span><span class="o">=</span><span class="n">WARN</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Конфигурация с несколькими аппендерами:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">log4j</span><span class="o">.</span><span class="na">rootLogger</span><span class="o">=</span><span class="n">debug</span><span class="o">,</span> <span class="n">stdout</span><span class="o">,</span> <span class="n">R</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">log4j</span><span class="o">.</span><span class="na">appender</span><span class="o">.</span><span class="na">stdout</span><span class="o">=</span><span class="n">org</span><span class="o">.</span><span class="na">apache</span><span class="o">.</span><span class="na">log4j</span><span class="o">.</span><span class="na">ConsoleAppender</span>
+</span><span class='line'><span class="n">log4j</span><span class="o">.</span><span class="na">appender</span><span class="o">.</span><span class="na">stdout</span><span class="o">.</span><span class="na">layout</span><span class="o">=</span><span class="n">org</span><span class="o">.</span><span class="na">apache</span><span class="o">.</span><span class="na">log4j</span><span class="o">.</span><span class="na">PatternLayout</span>
+</span><span class='line'>
+</span><span class='line'><span class="err">#</span> <span class="n">Pattern</span> <span class="n">to</span> <span class="n">output</span> <span class="n">the</span> <span class="n">caller</span><span class="err">&#39;</span><span class="n">s</span> <span class="n">file</span> <span class="n">name</span> <span class="n">and</span> <span class="n">line</span> <span class="n">number</span><span class="o">.</span>
+</span><span class='line'><span class="n">log4j</span><span class="o">.</span><span class="na">appender</span><span class="o">.</span><span class="na">stdout</span><span class="o">.</span><span class="na">layout</span><span class="o">.</span><span class="na">ConversionPattern</span><span class="o">=%</span><span class="mi">5</span><span class="n">p</span> <span class="o">[%</span><span class="n">t</span><span class="o">]</span> <span class="o">(%</span><span class="nl">F:</span><span class="o">%</span><span class="n">L</span><span class="o">)</span> <span class="o">-</span> <span class="o">%</span><span class="n">m</span><span class="o">%</span><span class="n">n</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">log4j</span><span class="o">.</span><span class="na">appender</span><span class="o">.</span><span class="na">R</span><span class="o">=</span><span class="n">org</span><span class="o">.</span><span class="na">apache</span><span class="o">.</span><span class="na">log4j</span><span class="o">.</span><span class="na">RollingFileAppender</span>
+</span><span class='line'><span class="n">log4j</span><span class="o">.</span><span class="na">appender</span><span class="o">.</span><span class="na">R</span><span class="o">.</span><span class="na">File</span><span class="o">=</span><span class="n">example</span><span class="o">.</span><span class="na">log</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">log4j</span><span class="o">.</span><span class="na">appender</span><span class="o">.</span><span class="na">R</span><span class="o">.</span><span class="na">MaxFileSize</span><span class="o">=</span><span class="mi">100</span><span class="n">KB</span>
+</span><span class='line'><span class="err">#</span> <span class="n">Keep</span> <span class="n">one</span> <span class="n">backup</span> <span class="n">file</span>
+</span><span class='line'><span class="n">log4j</span><span class="o">.</span><span class="na">appender</span><span class="o">.</span><span class="na">R</span><span class="o">.</span><span class="na">MaxBackupIndex</span><span class="o">=</span><span class="mi">1</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">log4j</span><span class="o">.</span><span class="na">appender</span><span class="o">.</span><span class="na">R</span><span class="o">.</span><span class="na">layout</span><span class="o">=</span><span class="n">org</span><span class="o">.</span><span class="na">apache</span><span class="o">.</span><span class="na">log4j</span><span class="o">.</span><span class="na">PatternLayout</span>
+</span><span class='line'><span class="n">log4j</span><span class="o">.</span><span class="na">appender</span><span class="o">.</span><span class="na">R</span><span class="o">.</span><span class="na">layout</span><span class="o">.</span><span class="na">ConversionPattern</span><span class="o">=%</span><span class="n">p</span> <span class="o">%</span><span class="n">t</span> <span class="o">%</span><span class="n">c</span> <span class="o">-</span> <span class="o">%</span><span class="n">m</span><span class="o">%</span><span class="n">n</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Для выводы отладочной информации предпочтительнее сначала проверять уровень логгирования
+используемого логгера, т.е. вместо</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">logger</span><span class="o">.</span><span class="na">debug</span><span class="o">(</span><span class="s">&quot;Entry number: &quot;</span> <span class="o">+</span> <span class="n">i</span> <span class="o">+</span> <span class="s">&quot; is &quot;</span> <span class="o">+</span> <span class="n">String</span><span class="o">.</span><span class="na">valueOf</span><span class="o">(</span><span class="n">entry</span><span class="o">[</span><span class="n">i</span><span class="o">]));</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>лучше писать</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="k">if</span><span class="o">(</span><span class="n">logger</span><span class="o">.</span><span class="na">isDebugEnabled</span><span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>    <span class="n">logger</span><span class="o">.</span><span class="na">debug</span><span class="o">(</span><span class="s">&quot;Entry number: &quot;</span> <span class="o">+</span> <span class="n">i</span> <span class="o">+</span> <span class="s">&quot; is &quot;</span> <span class="o">+</span> <span class="n">String</span><span class="o">.</span><span class="na">valueOf</span><span class="o">(</span><span class="n">entry</span><span class="o">[</span><span class="n">i</span><span class="o">]));</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Maven dependency:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="o">&lt;</span><span class="n">dependency</span><span class="o">&gt;</span>
+</span><span class='line'>    <span class="o">&lt;</span><span class="n">groupId</span><span class="o">&gt;</span><span class="n">log4j</span><span class="o">&lt;/</span><span class="n">groupId</span><span class="o">&gt;</span>
+</span><span class='line'>    <span class="o">&lt;</span><span class="n">artifactId</span><span class="o">&gt;</span><span class="n">log4j</span><span class="o">&lt;/</span><span class="n">artifactId</span><span class="o">&gt;</span>
+</span><span class='line'>    <span class="o">&lt;</span><span class="n">version</span><span class="o">&gt;</span><span class="mf">1.2</span><span class="o">.</span><span class="mi">17</span><span class="o">&lt;/</span><span class="n">version</span><span class="o">&gt;</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="n">dependency</span><span class="o">&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>SLF4J (Simple Logging Facade 4 Java)</h3>
+
+<p>API Log4J слишком простой, иногда необходимы дополнительные возможности, а так же не хочется
+быть привязанным к конкретному логгеру.</p>
+
+<p>SLF4J не реализует логирование, а только предоставляет API для этого и средства, позволяющие
+использовать различные логгеры через одно общее API.</p>
+
+<p>Получение логгера:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">Logger</span> <span class="n">logger</span> <span class="o">=</span> <span class="n">LoggerFactory</span><span class="o">.</span><span class="na">getLogger</span><span class="o">(</span><span class="n">HelloWorld</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+</span><span class='line'><span class="n">logger</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">&quot;Hello World&quot;</span><span class="o">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Если подключить только slf4j (<code>slf4j-api-1.7.1.jar</code>) к проекту,
+то в <code>sout</code> будет выведена ошибка следующего вида:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="nl">SLF4J:</span> <span class="n">Failed</span> <span class="n">to</span> <span class="n">load</span> <span class="kd">class</span> <span class="err">&quot;</span><span class="nc">org</span><span class="o">.</span><span class="na">slf4j</span><span class="o">.</span><span class="na">impl</span><span class="o">.</span><span class="na">StaticLoggerBinder</span><span class="err">&quot;</span><span class="o">.</span>
+</span><span class='line'><span class="nl">SLF4J:</span> <span class="n">Defaulting</span> <span class="n">to</span> <span class="n">no</span><span class="o">-</span><span class="n">operation</span> <span class="o">(</span><span class="n">NOP</span><span class="o">)</span> <span class="n">logger</span> <span class="n">implementation</span>
+</span><span class='line'><span class="nl">SLF4J:</span> <span class="n">See</span> <span class="nl">http:</span><span class="c1">//www.slf4j.org/codes.html#StaticLoggerBinder for further details.</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Чтобы slf4j заработал необходимо подключить bridge для конкретного логгера и при необходимости
+сам логгер.</p>
+
+<p>Например, для использования стандатного логгера Java, необходимо подключить еще и <code>simple</code> bridge: <code>slf4j-simple-1.7.1.jar</code>.</p>
+
+<p>Slf4J предоставляет огромное число дополнительных возможностей, таких как маркеры и шаблоны:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">Logger</span> <span class="n">logger</span> <span class="o">=</span> <span class="n">LoggerFactory</span><span class="o">.</span><span class="na">getLogger</span><span class="o">(</span><span class="n">Main</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">public</span> <span class="kt">void</span> <span class="nf">setTemperature</span><span class="o">(</span><span class="n">Integer</span> <span class="n">temperature</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>  <span class="n">oldT</span> <span class="o">=</span> <span class="n">t</span><span class="o">;</span>
+</span><span class='line'>    <span class="n">t</span> <span class="o">=</span> <span class="n">temperature</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">logger</span><span class="o">.</span><span class="na">debug</span><span class="o">(</span><span class="s">&quot;Temperature set to {}. Old temperature was {}.&quot;</span><span class="o">,</span> <span class="n">t</span><span class="o">,</span> <span class="n">oldT</span><span class="o">);</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">if</span><span class="o">(</span><span class="n">temperature</span><span class="o">.</span><span class="na">intValue</span><span class="o">()</span> <span class="o">&gt;</span> <span class="mi">50</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>      <span class="n">logger</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">&quot;Temperature has risen above 50 degrees.&quot;</span><span class="o">);</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Подключив одну из следующих зависимостей можно использовать конкретный логгер:</p>
+
+<ol>
+<li>slf4j-log4j12-1.7.1.jar (log4j);</li>
+<li>slf4j-jdk14-1.7.1.jar (java.util.logging);</li>
+<li>slf4j-nop-1.7.1.jar (no operations);
+etc.</li>
+</ol>
+
+
+<p>Maven:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="o">&lt;</span><span class="n">dependency</span><span class="o">&gt;</span>
+</span><span class='line'>  <span class="o">&lt;</span><span class="n">groupId</span><span class="o">&gt;</span><span class="n">org</span><span class="o">.</span><span class="na">slf4j</span><span class="o">&lt;/</span><span class="n">groupId</span><span class="o">&gt;</span>
+</span><span class='line'>  <span class="o">&lt;</span><span class="n">artifactId</span><span class="o">&gt;</span><span class="n">slf4j</span><span class="o">-</span><span class="n">log4j12</span><span class="o">&lt;/</span><span class="n">artifactId</span><span class="o">&gt;</span>
+</span><span class='line'>  <span class="o">&lt;</span><span class="n">version</span><span class="o">&gt;</span><span class="mf">1.7</span><span class="o">.</span><span class="mi">1</span><span class="o">&lt;/</span><span class="n">version</span><span class="o">&gt;</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="n">dependency</span><span class="o">&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="o">&lt;</span><span class="n">dependency</span><span class="o">&gt;</span>
+</span><span class='line'>  <span class="o">&lt;</span><span class="n">groupId</span><span class="o">&gt;</span><span class="n">org</span><span class="o">.</span><span class="na">slf4j</span><span class="o">&lt;/</span><span class="n">groupId</span><span class="o">&gt;</span>
+</span><span class='line'>  <span class="o">&lt;</span><span class="n">artifactId</span><span class="o">&gt;</span><span class="n">slf4j</span><span class="o">-</span><span class="n">jdk14</span><span class="o">&lt;/</span><span class="n">artifactId</span><span class="o">&gt;</span>
+</span><span class='line'>  <span class="o">&lt;</span><span class="n">version</span><span class="o">&gt;</span><span class="mf">1.7</span><span class="o">.</span><span class="mi">1</span><span class="o">&lt;/</span><span class="n">version</span><span class="o">&gt;</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="n">dependency</span><span class="o">&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+  
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>About Me</h1>
+  <p>
+	My name is Sergey Lukjanov.
+	I am software engineer from Russia.
+	I am interesting in Java, Kotlin, Scala, Groovy, JavaScript, NIO, Concurrency and many other langs/tools/libs.
+  </p>
+</section>
+
+<section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2012/08/08/mountain-lion-and-istat-pro/">Mountain Lion and iStat Pro</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/03/28/ssh-tunneling/">SSH Tunneling</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/02/07/shell-improvements-with-zsh/">Shell improvements with Zsh</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2011/09/29/html5-slides/">HTML5 Slides</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2011/09/29/lock-and-reentrantlock/">Lock and ReentrantLock</a>
+      </li>
+    
+  </ul>
+</section>
+<section>
+<h1>QR-Code<abbr title="The word 'QR Code' is a registered trademark of DENSO WAVE INCORPORATED. It applies only for the word 'QR Code', not for image.">&trade;</abbr></h1>
+<a href="http://slukjanov.name/java-courses-2012/lecture-02-jvm2-logging.html"><img src="http://chart.apis.google.com/chart?chs=150x150&cht=qr&chld=|0&chco=165B94&chl=http://slukjanov.name/java-courses-2012/lecture-02-jvm2-logging.html" alt="post-qrcode"></a></section>
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2012 - Sergey Lukjanov -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>
