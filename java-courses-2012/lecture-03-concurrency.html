@@ -162,7 +162,7 @@
 <li>остановка и приостановка потоков deprecated;</li>
 <li>состояния потоков (NEW, RUNNABLE, BLOCKED, WAITING, TIMED_WAITING, TERMINATED);</li>
 <li>ключевое слово <code>synchronized</code> на метод/блок/статик метод, при этом происходит захват монитора;</li>
-<li>методы <code>Thread.sleep()</code>, <code>Thread.yield()</code>,  <code>Thread#join()</code>;</li>
+<li>методы <code>Thread.sleep()</code>, <code>Thread.yield()</code>,  <code>Thread#join()</code>, <code>Thread.interrupt()</code>;</li>
 <li>ключевое слово <code>volatile</code>;</li>
 <li><code>synchronized</code> и <code>volatile</code> также нужны чтобы потоки могли видеть изменения сделанные другими потоками (синхронизацию нельзя использовать только для записи);</li>
 <li>методы <code>Object#wait()</code>, <code>Object#notify()</code>, <code>Object#notifyAll()</code>, при вызове <code>notify()</code> просыпается случайный поток, при вызове <code>wait()</code> отпускается монитор, захваченный текущим потоком, при вызове <code>sleep()</code> и <code>join()</code> – нет;</li>
@@ -176,7 +176,45 @@
 
 <h2>Практической задание (сделать на занятии)</h2>
 
-<p>Реализовать: семафор, барьер, пул потоков.</p>
+<p>Необходимо реализовать &#8220;семафор&#8221; с использованием механизма wait-notify.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Semaphore</span> <span class="o">{</span>
+</span><span class='line'>    <span class="kd">public</span> <span class="nf">Semaphore</span><span class="o">(</span><span class="kt">int</span> <span class="n">resourceNumber</span><span class="o">)</span> <span class="o">{...}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">acquire</span><span class="o">()</span> <span class="kd">throws</span> <span class="n">java</span><span class="o">.</span><span class="na">lang</span><span class="o">.</span><span class="na">InterruptedException</span> <span class="o">{...}</span>
+</span><span class='line'>    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">acquire</span><span class="o">(</span><span class="kt">int</span> <span class="n">number</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">java</span><span class="o">.</span><span class="na">lang</span><span class="o">.</span><span class="na">InterruptedException</span> <span class="o">{...}</span>
+</span><span class='line'>    <span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">tryAcquire</span><span class="o">()</span> <span class="o">{...}</span>
+</span><span class='line'>    <span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">tryAcquire</span><span class="o">(</span><span class="kt">int</span> <span class="n">number</span><span class="o">)</span> <span class="o">{...}</span>
+</span><span class='line'>    <span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">tryAcquire</span><span class="o">(</span><span class="kt">long</span> <span class="n">timeToWait</span><span class="o">,</span> <span class="n">java</span><span class="o">.</span><span class="na">util</span><span class="o">.</span><span class="na">concurrent</span><span class="o">.</span><span class="na">TimeUnit</span> <span class="n">timeUnit</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">java</span><span class="o">.</span><span class="na">lang</span><span class="o">.</span><span class="na">InterruptedException</span> <span class="o">{...}</span>
+</span><span class='line'>    <span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">tryAcquire</span><span class="o">(</span><span class="kt">int</span> <span class="n">number</span><span class="o">,</span> <span class="kt">long</span> <span class="n">timeToWait</span><span class="o">,</span> <span class="n">java</span><span class="o">.</span><span class="na">util</span><span class="o">.</span><span class="na">concurrent</span><span class="o">.</span><span class="na">TimeUnit</span> <span class="n">timeUnit</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">java</span><span class="o">.</span><span class="na">lang</span><span class="o">.</span><span class="na">InterruptedException</span> <span class="o">{...}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">release</span><span class="o">()</span> <span class="o">{...}</span>
+</span><span class='line'>    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">release</span><span class="o">(</span><span class="kt">int</span> <span class="n">number</span><span class="o">)</span> <span class="o">{...}</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Конструктор принимает на вход число доступных ресурсов, которые можно будет занимать.
+Метод <code>acquire</code> должен занимать 1 ресурс и если свободного ресурса нет, то ждать его появления.
+Метод <code>acquire(int)</code> должен занимать N ресурсов, занимая их по возможности и ожидая недостоющих ресурсов.
+Методы <code>tryAcquire</code> могут не смочь занять ресурсы, в таком случае они должны вернуть false и не занять никаких ресурсов.
+<code>TimeUnit</code> позволяет указать в каких еденицах указано время (секунды, минуты и тд).</p>
+
+<p>Методы <code>release</code> должны освобождать 1 или N ресурсов, дожидаясь в том случае если при их освобождение будет превышаться число доступных
+конструкторов указанных в конструкторе.</p>
 
 <h2>Домашнее задание</h2>
 
@@ -184,7 +222,11 @@
 
 <h3>Задание #1</h3>
 
-<p>Первое задание теоретическое. Ответ на каждый вопрос должен занимать 1-2 предложения.</p>
+<p>Доделать практическое задание с занятия.</p>
+
+<h3>Задание #2</h3>
+
+<p>Первое задание теоретическое. Ответ на каждый вопрос должен занимать 1-3 предложения.</p>
 
 <ol>
 <li>Как получить ссылку на текущий поток?</li>
@@ -198,9 +240,7 @@
 </ol>
 
 
-<p>Мб стоит использовать google forms для сбора ответов для удобства.</p>
-
-<h3>Задание #2</h3>
+<h3>Задание #3</h3>
 
 <p>Ваша задача заключается в создании двух реализаций интерфейса <code>Task</code>:</p>
 
@@ -258,7 +298,7 @@
 но вычисление значения (выполнение <code>callable</code>) должно происходить только при первом обращении к <code>get()</code>
 (в потоке который совершил первый вызов и только один раз).</p>
 
-<h3>Задание #3</h3>
+<h3>Задание #4</h3>
 
 <p>Ваша задача реализовать интерфейс <code>ExecutionManager</code>:</p>
 
@@ -303,15 +343,6 @@
 <li><code>interrupt()</code> должен отменять выполнения заданий, которые еще не начали выполняться;</li>
 <li><code>getInterruptedTaskCount()</code> должен возвращать количество заданий, которые не были выполены из-за отмены (вызовом предыдущего метода);</li>
 <li><code>isFinished()</code> должен возвращать <code>true</code>, если все таски были выполнены или отменены, <code>false</code> в противном случае.</li>
-</ul>
-
-
-<p>Далее можно развить и/или объединить эти задания чтобы они стали частью следующего задания.</p>
-
-<h2>Общие мысли</h2>
-
-<ul>
-<li>Может быть стоит рассказать студентам про <code>ForkJoinPool</code> в кратце. например на втором занятие в конце и дать задание. Можно попробовать дать задачку на распараллеливание типа проверки правильности скобочной последовательности.</li>
 </ul>
 
 
