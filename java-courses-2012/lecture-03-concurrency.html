@@ -201,8 +201,8 @@
 </span><span class='line'>    <span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">tryAcquire</span><span class="o">(</span><span class="kt">long</span> <span class="n">timeToWait</span><span class="o">,</span> <span class="n">java</span><span class="o">.</span><span class="na">util</span><span class="o">.</span><span class="na">concurrent</span><span class="o">.</span><span class="na">TimeUnit</span> <span class="n">timeUnit</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">java</span><span class="o">.</span><span class="na">lang</span><span class="o">.</span><span class="na">InterruptedException</span> <span class="o">{...}</span>
 </span><span class='line'>    <span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">tryAcquire</span><span class="o">(</span><span class="kt">int</span> <span class="n">number</span><span class="o">,</span> <span class="kt">long</span> <span class="n">timeToWait</span><span class="o">,</span> <span class="n">java</span><span class="o">.</span><span class="na">util</span><span class="o">.</span><span class="na">concurrent</span><span class="o">.</span><span class="na">TimeUnit</span> <span class="n">timeUnit</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">java</span><span class="o">.</span><span class="na">lang</span><span class="o">.</span><span class="na">InterruptedException</span> <span class="o">{...}</span>
 </span><span class='line'>
-</span><span class='line'>    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">release</span><span class="o">()</span> <span class="o">{...}</span>
-</span><span class='line'>    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">release</span><span class="o">(</span><span class="kt">int</span> <span class="n">number</span><span class="o">)</span> <span class="o">{...}</span>
+</span><span class='line'>    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">release</span><span class="o">()</span> <span class="kd">throws</span> <span class="n">InterruptedException</span> <span class="o">{...}</span>
+</span><span class='line'>    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">release</span><span class="o">(</span><span class="kt">int</span> <span class="n">number</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">InterruptedException</span> <span class="o">{...}</span>
 </span><span class='line'><span class="o">}</span>
 </span></code></pre></td></tr></table></div></figure>
 
@@ -213,7 +213,7 @@
 Методы <code>tryAcquire</code> могут не смочь занять ресурсы, в таком случае они должны вернуть false и не занять никаких ресурсов.
 <code>TimeUnit</code> позволяет указать в каких еденицах указано время (секунды, минуты и тд).</p>
 
-<p>Методы <code>release</code> должны освобождать 1 или N ресурсов, дожидаясь в том случае если при их освобождение будет превышаться число доступных
+<p>Методы <code>release</code> должны освобождать 1 или N ресурсов. Не обязательно делать wait в том случае если при их освобождение будет превышаться число доступных
 конструкторов указанных в конструкторе.</p>
 
 <h2>Домашнее задание</h2>
