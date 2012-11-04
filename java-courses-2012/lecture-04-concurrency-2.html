@@ -1,0 +1,328 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>JC12 - Lecture 04. Concurrency advanced - Frostman's blog</title>
+  <meta name="author" content="Sergey Lukjanov">
+
+  
+  <meta name="description" content="JC12 - Lecture 04. Concurrency Advanced Mirantis Java Course 2012 (back) Lecture 04. Concurrency advanced План / тезисы JMM intro;
+happens-before &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://slukjanov.name/java-courses-2012/lecture-04-concurrency-2.html">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="http://feeds.feedburner.com/slukjanov" rel="alternate" title="Frostman's blog" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet"
+      type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet"
+      type="text/css">
+
+<script src="/assets/jquery-1.7.2.min.js" type="text/javascript"></script>
+<script type="text/javascript">
+    var $j = jQuery.noConflict();
+</script>
+<link href="/assets/fancybox/jquery.fancybox.css?v=2.0.5" media="screen" rel="stylesheet" type="text/css">
+<script src="/assets/fancybox/jquery.fancybox.pack.js?v=2.0.5" type="text/javascript"></script>
+<script type="text/javascript">
+    if (!/android|iphone|ipod|ipad/i.test(navigator.userAgent)) {
+        $j(document).ready(function () {
+            $j('a[href$=".png"],a[href$=".jpg"],a[href$=".jpeg"],a[href$=".gif"]')
+                    .fancybox({
+                        closeClick:'true',
+                        openEffect:'elastic',
+                        closeEffect:'elastic'
+                    })
+        });
+    }
+</script>
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-25396023-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body    class="collapse-sidebar sidebar-footer" >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Frostman's blog</a></h1>
+  
+    <h2>Blog about programming and techs</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss email">
+  <li><a href="http://feeds.feedburner.com/slukjanov" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+    <li><a href="http://feedburner.google.com/fb/a/mailverify?uri=slukjanov" rel="subscribe-email" title="subscribe via email">Email</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:slukjanov.name" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/about">About me</a></li>
+  <li><a href="https://github.com/Frostman">Github</a></li>
+  <li><a href="https://twitter.com/lukjanovsv">Twitter</a></li>
+  <li><a href="mailto:blog@slukjanov.name">Mail</a></li>
+  <li><a href="/contact-me/index.html">Contact me</a></li>
+  <li><a href="/java-courses-2012/index.html">Mirantis Courses (RU)</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article role="article">
+  
+  <header>
+    <h1 class="entry-title">JC12 - Lecture 04. Concurrency Advanced</h1>
+    
+  </header>
+  
+  <h2><a href="http://www.mirantis.com">Mirantis</a> Java Course 2012 (<a href="index.html">back</a>)</h2>
+
+<h2>Lecture 04. Concurrency advanced</h2>
+
+<h2>План / тезисы</h2>
+
+<ul>
+<li>JMM intro;</li>
+<li>happens-before relationship;</li>
+<li>reordering;</li>
+<li>examples;</li>
+</ul>
+
+
+<h2>Практической задание (сделать на занятии)</h2>
+
+<p>thread-per-client server architecture.</p>
+
+<h2>Домашнее задание</h2>
+
+<p><em>Note.</em> Все решения должны быть thread-safe.</p>
+
+<h3>Задание #1</h3>
+
+<p>Необходимо реализовать простейший чат (как клиентскую, так и серверную часть) со следующим набором комманд/возможностей:</p>
+
+<p>(<code>&lt;arg&gt;</code> - параметры, [<code>&lt;opt_arg&gt;</code>] - опциональные параметры)</p>
+
+<h3><code>/connect &lt;ip_address:port&gt; &lt;nickname&gt; [&lt;password&gt;]</code></h3>
+
+<p>Подключение к серверу с указанным адресом и портом под указанным именем с указанным паролем.
+При первом подключении для конкретного имени сервер должен запомнить пароль и в будущем проверить его правильность для этого имени.
+Т.е. если имя еще не занято, то происходит регистрация. Если пароль не указан, то предполагается, что он пустой. После подключения
+к серверу, пользователь считается зашедшим в канал <code>global</code>, который никогда не удаляется и всегда доступен без пароля.
+Если на момент выполнения команды, клиент был уже подключени, к какому либо серверу, то старое подключение обрывается.</p>
+
+<h3><code>/join &lt;room_name&gt; [&lt;room_password&gt;]</code></h3>
+
+<p>Подключение к комнате с указанным именем и, возможно, используя пароль. Если такой комнаты еще не существовало, то комната создается.
+Если при создании комнаты был указан пароль, то комната создается закрытой, т.е. требующей пароля для захода. Подключение к комнате означает,
+что пользователю будут приходить сообщения отправленные на комнату целиком.</p>
+
+<h3><code>/leave &lt;room_name&gt;</code></h3>
+
+<p>Покинуть комнату с указанным именем. Комнату <code>global</code> тоже можно покинуть. Если комнату покинули все пользователи и это не <code>global</code>,
+то комната удаляется.</p>
+
+<h3><code>/msg #&lt;room_name&gt; Some message to the specified room "room_name".</code></h3>
+
+<p>Отправка сообщения в указанную комнату. Такие сообщения должны отображаться у пользователей, подписанных на указанный канал в следующем виде:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>msg from @user12345 in #global: Some message to the global room.
+</span><span class='line'>private msg from @user12345: Some private message.</span></code></pre></td></tr></table></div></figure>
+
+
+<h3><code>/msg @&lt;nickname&gt; Some message to the specified user "nickname".</code></h3>
+
+<p>Отправка сообщения указанному пользователю.</p>
+
+<h3><code>/disconnect</code></h3>
+
+<p>Отключение от сервера.</p>
+
+<h3><code>/list users</code></h3>
+
+<p>Вывод списка всех онлайн пользователей в виде:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>+----------+-----------+---------+-------------+
+</span><span class='line'>| Nickname | Password? | Global? | Joined rooms|
+</span><span class='line'>+----------+-----------+---------+-------------+
+</span><span class='line'>|user12345 + Yes       + Yes     | test, abcd  |
+</span><span class='line'>+----------+-----------+---------+-------------+
+</span><span class='line'>...</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Global? == joined to global room</p>
+
+<h3><code>/list rooms</code></h3>
+
+<p>Вывод списка всех комнат в виде:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>+-----------+-----------+---------+
+</span><span class='line'>| Room name | Password? | # users |
+</span><span class='line'>+-----------+-----------+---------+
+</span><span class='line'>| global    | No        | 15      |
+</span><span class='line'>+-----------+-----------+---------+
+</span><span class='line'>| test      | Yes       | 2       |
+</span><span class='line'>+-----------+-----------+---------+
+</span><span class='line'>| abcd      | No        | 10      |
+</span><span class='line'>+-----------+-----------+---------+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3><code>/ping</code></h3>
+
+<p>Эта команда должна автоматически отправлять клиентом примерно раз в секунду, чтобы сервер мог определять пользователей онлайн.
+Сервер должен помечать пользователей как оффлайн (удалять список комнат, к которым он подключени и тд), если от клиента не поступало
+пингов в течении 5 секунд.</p>
+
+<h3>Дополнительные комментарии</h3>
+
+<p>Историю сообщений хранить не нужно. Сообщения должны приходить только тем клиентам, которые будут их отображать, т.е. например приватные сообщения не должны приходить тем клиентам, которые не долюны их отображать и тд.</p>
+
+<p>Клиент должен в произвольном виде выдавать подтверждения об успешности операций connect/disconnect.</p>
+
+<p>GUI делать не нужно. Символ <code>\n</code> считать символом конца сообщения и разделителем для сообщений и комманд.</p>
+
+  
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>About Me</h1>
+  <p>
+	My name is Sergey Lukjanov.
+	I am software engineer from Russia.
+	I am interesting in Java, Kotlin, Scala, Groovy, JavaScript, NIO, Concurrency and many other langs/tools/libs.
+  </p>
+</section>
+
+<section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2012/08/08/mountain-lion-and-istat-pro/">Mountain Lion and iStat Pro</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/03/28/ssh-tunneling/">SSH Tunneling</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/02/07/shell-improvements-with-zsh/">Shell improvements with Zsh</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2011/09/29/html5-slides/">HTML5 Slides</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2011/09/29/lock-and-reentrantlock/">Lock and ReentrantLock</a>
+      </li>
+    
+  </ul>
+</section>
+<section>
+<h1>QR-Code<abbr title="The word 'QR Code' is a registered trademark of DENSO WAVE INCORPORATED. It applies only for the word 'QR Code', not for image.">&trade;</abbr></h1>
+<a href="http://slukjanov.name/java-courses-2012/lecture-04-concurrency-2.html"><img src="http://chart.apis.google.com/chart?chs=150x150&cht=qr&chld=|0&chco=165B94&chl=http://slukjanov.name/java-courses-2012/lecture-04-concurrency-2.html" alt="post-qrcode"></a></section>
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2012 - Sergey Lukjanov -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>
