@@ -9,7 +9,8 @@
   <meta name="author" content="Sergey Lukjanov">
 
   
-  <meta name="description" content="JC12 - Lecture 05. JDK 8 Mirantis Java Course 2012 (back) Lecture 05. JDK 8 [[https://github.com/Frostman/jdk8-demo]] About Me My name is Sergey &hellip;">
+  <meta name="description" content="JC12 - Lecture 05. JDK 8 Mirantis Java Course 2012 (back) Lecture 05. JDK 7-8 JDK 7 The main new things in JDK 7 are: ForkJoin framework;
+new &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -113,9 +114,104 @@
   
   <h2><a href="http://www.mirantis.com">Mirantis</a> Java Course 2012 (<a href="index.html">back</a>)</h2>
 
-<h2>Lecture 05. JDK 8</h2>
+<h2>Lecture 05. JDK 7-8</h2>
 
-<p>[[https://github.com/Frostman/jdk8-demo]]</p>
+<h3>JDK 7</h3>
+
+<p>The main new things in JDK 7 are:</p>
+
+<ul>
+<li>ForkJoin framework;</li>
+<li>new bytecode verification system with type checking;</li>
+<li>syntax sugar - Project Coin:
+
+<ul>
+<li>strings in switch;</li>
+<li>binary integral literals and underscores in numeric literals;</li>
+<li>multi-catch and more precise rethrow;</li>
+<li>improved type inference for generic instance creation (<code>diamond</code>-operator);</li>
+<li>try-with-resources statement;</li>
+<li>simplified varargs method invocation;</li>
+</ul>
+</li>
+<li>JSR 292: Dynamic langs support:
+
+<ul>
+<li>invokedynamic;</li>
+<li>method handlers;</li>
+<li>used by Groovy, Jython, JRuby, etc.</li>
+</ul>
+</li>
+</ul>
+
+
+<h3>JDK 8</h3>
+
+<p>The main new things for us:</p>
+
+<ul>
+<li>lambdas (closures);</li>
+<li>stream (bulk) operations;</li>
+<li>defenders.</li>
+</ul>
+
+
+<p>There are much more changes in JDK 8, you can find all of them <a href="http://openjdk.java.net/projects/jdk8/features">here</a>.</p>
+
+<p><em>SAM</em> == single abstract method.</p>
+
+<p><em>Functional interface</em> - interface with only one abstract method.</p>
+
+<p><em>lambda</em> - instance of functional interface.</p>
+
+<p><a href="https://github.com/Frostman/jdk8-demo">repo with code examples</a></p>
+
+<h3>lambdas:</h3>
+
+<ul>
+<li>class <code>LambdaTest</code>;</li>
+<li>class <code>MethodRefTest</code>;</li>
+<li>class <code>CaptureTest</code>;</li>
+<li>class <code>FibonacciTest</code>;</li>
+<li>class <code>ThreadLocalTest</code>;</li>
+<li>class <code>WeirdFunctionTest</code>.</li>
+</ul>
+
+
+<h3>lambdas lifecycle:</h3>
+
+<ul>
+<li>linkage;</li>
+<li>capture;</li>
+<li>invocation.</li>
+</ul>
+
+
+<h3>anon/inner classes lifecycle:</h3>
+
+<ul>
+<li>class loading;</li>
+<li>creation (new);</li>
+<li>invocation.</li>
+</ul>
+
+
+<h3>streams:</h3>
+
+<ul>
+<li>class <code>StreamApiTest</code>;</li>
+<li>class <code>ExternalInternalTest</code>;</li>
+<li>class <code>SeqParTest</code>;</li>
+<li>class <code>LazyEagerTest</code>.</li>
+</ul>
+
+
+<h3>defenders:</h3>
+
+<ul>
+<li>class <code>DefenderTest</code>.</li>
+</ul>
+
 
   
 </article>
