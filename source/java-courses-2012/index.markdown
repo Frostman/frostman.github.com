@@ -18,14 +18,15 @@ Table of contents:
 
 1. [JVM bytecode and instrumentation #1](lecture-01-jvm.html)
 2. [JVM bytecode and instrumentation #2 and logging](lecture-02-jvm2-logging.html)
-3. Concurrency #1: Basics
-4. Concurrency #2: Advanced
-5. WEB #1: http, html, css
-6. Servlet API
+3. [Concurrency #1: Basics](lecture-03-concurrency.html)
+4. [Concurrency #2: Advanced](lecture-04-concurrency-2.html)
+5. [JDK 8](lecture-05-jdk8.html)
+6. [WEB #1: HTTP, HTML, CSS, Servlet API](lecture-06-web1-servlets.html)
 7. WEB #2: JavaScript
 8. MVC
 9. DB: JPA, ORM
-10. Tools
-11. Play! framework
+10. Play! framework
+
++ Tools
 
 Some notes for home works: [hw-requirements](hw-requirements.html).
