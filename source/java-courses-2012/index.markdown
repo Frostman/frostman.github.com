@@ -22,10 +22,11 @@ Table of contents:
 4. [Concurrency #2: Advanced](lecture-04-concurrency-2.html)
 5. [JDK 8](lecture-05-jdk8.html)
 6. [WEB #1: HTTP, HTML, CSS, Servlet API](lecture-06-web1-servlets.html)
-7. WEB #2: JavaScript
-8. MVC
-9. DB: JPA, ORM
-10. Play! framework
+7. [DI, IoC, Guice](lecture-07-di-guice.html)
+8. WEB #2: JavaScript
+9. MVC
+10. DB: JPA, ORM
+11. Play! framework
 
 + Tools
 
