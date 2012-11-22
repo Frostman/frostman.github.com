@@ -1,0 +1,598 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>JC12 - Lecture 06. WEB - Frostman's blog</title>
+  <meta name="author" content="Sergey Lukjanov">
+
+  
+  <meta name="description" content="JC12 - Lecture 06. WEB Mirantis Java Course 2012 (back) Lecture 06. WEB #1: HTTP, HTML, CSS, Servlet API План / тезисы small intro to http, html, &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://slukjanov.name/java-courses-2012/lecture-06-web1-servlets.html">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="http://feeds.feedburner.com/slukjanov" rel="alternate" title="Frostman's blog" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet"
+      type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet"
+      type="text/css">
+
+<script src="/assets/jquery-1.7.2.min.js" type="text/javascript"></script>
+<script type="text/javascript">
+    var $j = jQuery.noConflict();
+</script>
+<link href="/assets/fancybox/jquery.fancybox.css?v=2.0.5" media="screen" rel="stylesheet" type="text/css">
+<script src="/assets/fancybox/jquery.fancybox.pack.js?v=2.0.5" type="text/javascript"></script>
+<script type="text/javascript">
+    if (!/android|iphone|ipod|ipad/i.test(navigator.userAgent)) {
+        $j(document).ready(function () {
+            $j('a[href$=".png"],a[href$=".jpg"],a[href$=".jpeg"],a[href$=".gif"]')
+                    .fancybox({
+                        closeClick:'true',
+                        openEffect:'elastic',
+                        closeEffect:'elastic'
+                    })
+        });
+    }
+</script>
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-25396023-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body    class="collapse-sidebar sidebar-footer" >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Frostman's blog</a></h1>
+  
+    <h2>Blog about programming and techs</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss email">
+  <li><a href="http://feeds.feedburner.com/slukjanov" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+    <li><a href="http://feedburner.google.com/fb/a/mailverify?uri=slukjanov" rel="subscribe-email" title="subscribe via email">Email</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:slukjanov.name" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/about">About me</a></li>
+  <li><a href="https://github.com/Frostman">Github</a></li>
+  <li><a href="https://twitter.com/lukjanovsv">Twitter</a></li>
+  <li><a href="mailto:blog@slukjanov.name">Mail</a></li>
+  <li><a href="/contact-me/index.html">Contact me</a></li>
+  <li><a href="/java-courses-2012/index.html">Mirantis Courses (RU)</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article role="article">
+  
+  <header>
+    <h1 class="entry-title">JC12 - Lecture 06. WEB</h1>
+    
+  </header>
+  
+  <h2><a href="http://www.mirantis.com">Mirantis</a> Java Course 2012 (<a href="index.html">back</a>)</h2>
+
+<h2>Lecture 06. WEB #1: HTTP, HTML, CSS, Servlet API</h2>
+
+<h2>План / тезисы</h2>
+
+<ul>
+<li>small intro to http, html, css</li>
+<li>servlet api</li>
+<li>how to start and use tomcat from IDEA</li>
+</ul>
+
+
+<h2>HTTP</h2>
+
+<p>HTTP - HyperText Transfer Prоtocоl</p>
+
+<h3>HTTP/1.0</h3>
+
+<p>В мае 1996 года был выпущен RFC 1945, послуживший основой для реализации большинства компонент HTTP/1.0.</p>
+
+<h3>HTTP/1.1</h3>
+
+<p>Текущая версия протокола, принята в июне 1999 года. Новым в этой версии был режим «постоянного соединения»: TCP-соединение может оставаться открытым после отправки ответа на запрос, что позволяет посылать несколько запросов за одно соединение. Клиент теперь обязан посылать информацию об имени хоста, к которому он обращается, что сделало возможной более простую организацию виртуального хостинга.</p>
+
+<h3>Структура HTTP протокола</h3>
+
+<p>Каждое HTTP-сообщение состоит из 3 частей:</p>
+
+<ol>
+<li>Starting line — определяет тип сообщения;</li>
+<li>Headers — характеризуют тело сообщения, параметры передачи и прочие сведения;</li>
+<li>Message Body — непосредственно данные сообщения, отделяется от заголовков пустой строкой.</li>
+</ol>
+
+
+<h3>HTTP request (открытие странички про HTTP на wikipedia.org)</h3>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>GET /wiki/HTTP HTTP/1.0
+</span><span class='line'>Host: ru.wikipedia.org</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>HTTP response (на запрос на страничку про HTTP на wikipedia.org)</h3>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>HTTP/1.0 200 OK
+</span><span class='line'>&lt;payload&gt;</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>HTTP Methods</h3>
+
+<p>Это некоторые операции над сервером.</p>
+
+<p>Каждый сервер обязан поддерживать как минимум методы GET и HEAD. Если сервер не распознал указанный клиентом метод, то он должен вернуть статус 501 (Not Implemented). Если серверу метод известен, но он неприменим к конкретному ресурсу, то возвращается сообщение с кодом 405 (Method Not Allowed). В обоих случаях серверу следует включить в сообщение ответа заголовок Allow со списком поддерживаемых методов.
+Кроме методов GET и HEAD, часто применяется метод POST.</p>
+
+<ul>
+<li><code>GET</code> - запрос содержимого указанного ресурса, так же различают ещё условный GET (с заголовками If-Modified-Since, If-Match, If-Range, etc.) и частичный GET (с заголовком Range);</li>
+<li><code>HEAD</code> - запрос метаинформации, проверка наличия ресурса, ответ сервера не содержит тело;</li>
+<li><code>OPTIONS</code> - проверка списка поддерживаемых методов, &#8220;пингование&#8221; сервера, определение параметров сервера и соединения;</li>
+<li><code>POST</code> - передача данных от клиента на сервер, предполагается что сервер будет обрабатывать загруженные данные;</li>
+<li><code>PUT</code> - загрузка данных сервер, предполагается, что они будут доступным по адресу, на который производилась загрузка;</li>
+<li><code>PATCH</code> - аналогично <code>PUT</code>, но для какого то фрагмента данных;</li>
+<li><code>DELETE</code> - удаление указанного ресурса.</li>
+</ul>
+
+
+<h3>HTTP Status codes</h3>
+
+<p>Код состояния является частью первой строки ответа сервера. Это целое трехзначное число. Первая цифра - класс состояния. Обычно за кодом через пробел следует фраза на английском языке, поясняющая состояние.</p>
+
+<p>Основные состояния:</p>
+
+<ul>
+<li><code>1xx Informational</code> - информирование о процессе передачи, например, <code>100 Continue</code>, <code>101 Switching Protocols</code>, etc;</li>
+<li><code>2xx Success</code> - информирование об успешном принятии и обработке запроса от клиента, например, <code>200OK</code>, <code>201 Created</code>, etc;</li>
+<li><code>3xx Redirection</code> - информирование о необходимость использовать другой адрес, например, сделать запрос на другой адрес;</li>
+<li><code>4xx Client Error</code> - информирование об ошибке со стороны клиента, например, <code>403 Forbidden</code>, <code>404 Not Found</code>, <code>408 Request Timeout</code>, etc;</li>
+<li><code>5xx Server Error</code> - информирование об ошибке со стороны сервера (во время обработки запроса), например, <code>500 Internal Server Error</code>, <code>501 Not Implemented</code>, etc;</li>
+</ul>
+
+
+<p>Подробное описание - <a href="http://en.wikipedia.org/wiki/List_of_HTTP_status_codes">wiki: List of HTTP status codes</a></p>
+
+<h3>HTTP Headers</h3>
+
+<p>Этоо строки в HTTP-сообщении, содержащие разделённую двоеточием пару параметр-значение. Заголовки должны отделяться от тела сообщения хотя бы одной пустой строкой.</p>
+
+<p>Некоторые заголовки:</p>
+
+<ul>
+<li><code>Server</code> - имя используемого веб-сервера, зачастую содержит информация об ОС и версиях;</li>
+<li><code>Content-Type</code> - тип контента (<code>text/html</code>, <code>text/plain</code>, etc);</li>
+</ul>
+
+
+<p>Подробное описание - <a href="http://en.wikipedia.org/wiki/List_of_HTTP_header_fields">List of HTTP header fields</a></p>
+
+<p>Множество примеров есть на <a href="http://en.wikipedia.org/wiki/Hypertext_Transfer_Protocol">wikipedia</a>.</p>
+
+<h2>Servlet API (version &lt; 3.0)</h2>
+
+<p>Это просто набор интерфейсов, спецификация. Существует множество реализаций - сервлет-контейнеры (servlet container - Tomcat, Jetty, etc).
+Это описание модели взаимодействие с HTTP протоколом в виде управления запросами (request) и ответами (response).</p>
+
+<p>Веб-приложение (web application) представляет из себя WAR-файл специального вида.</p>
+
+<p>Сервлет-контейнер может содержать в себе несколько веб-приложений.</p>
+
+<p>Все общение с окружающим миром реализуется через интерфейсы сервлет-контейнера.</p>
+
+<h3>Web application structure</h3>
+
+<p>По спецификации Java веб-приложения упаковываются в war архивы (Web ARchive), являющийся тем же самым jar&#8217;ом со специальной структурой. Обычно, когда application container нфходит war-файл, он деплоит его и он становится доступным по некоторому адресу.</p>
+
+<p>Вниутри war&#8217;a необходима только одна директория - <code>WEB-INF</code>. Содержимое этой директории недоступно пользователям веб-сервера напрямую. Эта директория содержит директории <code>classes</code> и <code>lib</code> со скомпилированными классами нашего приложения и дополнителными jar&#8217;aми (библиотеками) соответственно. Содержимое этих папок будет автоматически загружено class loader&#8217;ом веб-приложения. Так же в папке <code>WEB-INF</code> должен быть файл <code>web.xml</code>, содержащий deployment description. Если приложение использует только JSP, то этот файл необязателен. В нем содержится описание всех сервлетов, фильтров и тд.</p>
+
+<h3>Servlet Life Cycle</h3>
+
+<ul>
+<li>loading;</li>
+<li>instantiation;</li>
+<li>initialization;</li>
+<li>serving;</li>
+<li>destroying.</li>
+</ul>
+
+
+<h3><code>javax.servlet.http.HttpServlet</code></h3>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">HttpServlet</span> <span class="kd">extends</span> <span class="n">javax</span><span class="o">.</span><span class="na">servlet</span><span class="o">.</span><span class="na">GenericServlet</span> <span class="o">{</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">init</span><span class="o">(</span><span class="n">ServletConfig</span> <span class="n">config</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">ServletException</span> <span class="o">{</span> <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">init</span><span class="o">()</span> <span class="kd">throws</span> <span class="n">ServletException</span> <span class="o">{</span> <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="kd">protected</span> <span class="kt">void</span> <span class="k">do</span><span class="o">&lt;</span><span class="n">Get</span><span class="o">/</span><span class="n">Head</span><span class="o">/</span><span class="n">Post</span><span class="o">/</span><span class="n">Put</span><span class="o">/</span><span class="n">Delete</span><span class="o">/</span><span class="n">Options</span><span class="o">/</span><span class="n">Trace</span><span class="o">&gt;(</span><span class="n">javax</span><span class="o">.</span><span class="na">servlet</span><span class="o">.</span><span class="na">http</span><span class="o">.</span><span class="na">HttpServletRequest</span> <span class="n">req</span><span class="o">,</span> <span class="n">javax</span><span class="o">.</span><span class="na">servlet</span><span class="o">.</span><span class="na">http</span><span class="o">.</span><span class="na">HttpServletResponse</span> <span class="n">resp</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">javax</span><span class="o">.</span><span class="na">servlet</span><span class="o">.</span><span class="na">ServletException</span><span class="o">,</span> <span class="n">java</span><span class="o">.</span><span class="na">io</span><span class="o">.</span><span class="na">IOException</span> <span class="o">{</span> <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="kd">protected</span> <span class="kt">void</span> <span class="nf">service</span><span class="o">(</span><span class="n">javax</span><span class="o">.</span><span class="na">servlet</span><span class="o">.</span><span class="na">http</span><span class="o">.</span><span class="na">HttpServletRequest</span> <span class="n">req</span><span class="o">,</span> <span class="n">javax</span><span class="o">.</span><span class="na">servlet</span><span class="o">.</span><span class="na">http</span><span class="o">.</span><span class="na">HttpServletResponse</span> <span class="n">resp</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">javax</span><span class="o">.</span><span class="na">servlet</span><span class="o">.</span><span class="na">ServletException</span><span class="o">,</span> <span class="n">java</span><span class="o">.</span><span class="na">io</span><span class="o">.</span><span class="na">IOException</span> <span class="o">{</span> <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">destroy</span><span class="o">()</span> <span class="o">{</span> <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Servlets Deployment Description</h3>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;servlet&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;description&gt;</span>This is a servlet<span class="nt">&lt;/description&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;display-name&gt;</span>Servlet #1<span class="nt">&lt;/display-name&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;servlet-name&gt;</span>FirstServlet<span class="nt">&lt;/servlet-name&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;class&gt;</span>ru.frostman.FirstServlet<span class="nt">&lt;/class&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;init-param&gt;</span>
+</span><span class='line'>      <span class="nt">&lt;param-name&gt;</span>some-arg<span class="nt">&lt;/param-name&gt;</span>
+</span><span class='line'>      <span class="nt">&lt;param-value&gt;</span>some-value<span class="nt">&lt;/param-value&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;/init-param&gt;</span>
+</span><span class='line'><span class="nt">&lt;/servlet&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="nt">&lt;servlet-mapping&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;servlet-name&gt;</span>FirstServlet<span class="nt">&lt;/servlet-name&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;uri-pattern&gt;</span>/path/to/first/servlet<span class="nt">&lt;/uti-pattern&gt;</span>
+</span><span class='line'><span class="nt">&lt;/servlet-mapping&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3><code>javax.servlet.Filter</code></h3>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">Filter</span> <span class="o">{</span>
+</span><span class='line'>    <span class="kt">void</span> <span class="nf">init</span><span class="o">(</span><span class="n">javax</span><span class="o">.</span><span class="na">servlet</span><span class="o">.</span><span class="na">FilterConfig</span> <span class="n">filterConfig</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">javax</span><span class="o">.</span><span class="na">servlet</span><span class="o">.</span><span class="na">ServletException</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="kt">void</span> <span class="nf">doFilter</span><span class="o">(</span><span class="n">javax</span><span class="o">.</span><span class="na">servlet</span><span class="o">.</span><span class="na">ServletRequest</span> <span class="n">servletRequest</span><span class="o">,</span> <span class="n">javax</span><span class="o">.</span><span class="na">servlet</span><span class="o">.</span><span class="na">ServletResponse</span> <span class="n">servletResponse</span><span class="o">,</span> <span class="n">javax</span><span class="o">.</span><span class="na">servlet</span><span class="o">.</span><span class="na">FilterChain</span> <span class="n">filterChain</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">java</span><span class="o">.</span><span class="na">io</span><span class="o">.</span><span class="na">IOException</span><span class="o">,</span> <span class="n">javax</span><span class="o">.</span><span class="na">servlet</span><span class="o">.</span><span class="na">ServletException</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="kt">void</span> <span class="nf">destroy</span><span class="o">();</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Они так же описываются в web.xml</p>
+
+<p>Filter chains.</p>
+
+<h3>Listeners</h3>
+
+<ul>
+<li><code>ServletContextListener</code>;</li>
+<li><code>HttpSessionListener</code>;</li>
+<li>etc.</li>
+</ul>
+
+
+<h2>Servlet API (version >= 3.0)</h2>
+
+<p>Цели:</p>
+
+<ul>
+<li>упрощение разработки;</li>
+<li>модульность;</li>
+<li>асинхронная обработка;</li>
+<li>управление безопасностью;</li>
+<li>динамическая регистрация сервлетов и фильтров</li>
+</ul>
+
+
+<h3>Annotations (<code>javax.servlet.annotation</code>)</h3>
+
+<p>web.xml теперь необязателен, сервлет-контейнер отвечает за обработку аннотированных классов расположенных в каталоге WEB-INF/classes, в архивах из каталога WEB-INF/lib, или где-либо еще в classpath. Приложение в jar&#8217;e тоже может содержать перечисленные элементы.</p>
+
+<ul>
+<li><code>@WebServlet</code> - помеченный этой аннотацией класс является сервлетом (так же он должен быть унаследован от HttpServlet);</li>
+<li><code>@WebFilter</code> - тоже самое, но для фильтров;</li>
+<li><code>@WebListener</code> - помеченный этой аннотацией listener, будет подгружен сервлет-контейнером в качестве обработчика событий для данного веб-приложения.</li>
+</ul>
+
+
+<h3>Dynamic servlet loading</h3>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="nd">@WebListener</span>
+</span><span class='line'><span class="kd">public</span> <span class="kd">class</span> <span class="nc">TestListener</span> <span class="kd">implements</span> <span class="n">ServletContextListener</span> <span class="o">{</span>
+</span><span class='line'>    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">contextInitialized</span><span class="o">(</span><span class="n">ServletContextEvent</span> <span class="n">servletContextEvent</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>        <span class="n">ServletContext</span> <span class="n">servletContext</span> <span class="o">=</span> <span class="n">servletContextEvent</span><span class="o">.</span><span class="na">getServletContext</span><span class="o">();</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="n">String</span> <span class="n">className</span> <span class="o">=</span> <span class="s">&quot;ru.frostman.DynamicServlet&quot;</span><span class="o">;</span>
+</span><span class='line'>        <span class="n">String</span> <span class="n">servletName</span> <span class="o">=</span> <span class="s">&quot;DynamicServlet&quot;</span><span class="o">;</span>
+</span><span class='line'>        <span class="n">String</span> <span class="n">servletRequestPattern</span> <span class="o">=</span> <span class="s">&quot;/dynamic&quot;</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="n">ServletRegistration</span><span class="o">.</span><span class="na">Dynamic</span> <span class="n">dynamic</span> <span class="o">=</span> <span class="n">servletContext</span><span class="o">.</span><span class="na">addServlet</span><span class="o">(</span><span class="n">servletName</span><span class="o">,</span> <span class="n">className</span><span class="o">);</span>
+</span><span class='line'>        <span class="n">dynamic</span><span class="o">.</span><span class="na">addMapping</span><span class="o">(</span><span class="n">servletRequestPattern</span><span class="o">);</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nd">@Override</span>
+</span><span class='line'>    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">contextDestroyed</span><span class="o">(</span><span class="n">ServletContextEvent</span> <span class="n">servletContextEvent</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Maven</h3>
+
+<p>New webapp project:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">mvn</span> <span class="nl">archetype:</span><span class="n">generate</span> <span class="o">-</span><span class="n">DarchetypeArtifactId</span><span class="o">=</span><span class="n">maven</span><span class="o">-</span><span class="n">archetype</span><span class="o">-</span><span class="n">webapp</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Dependencies:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;dependency&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;groupId&gt;</span>javax.servlet<span class="nt">&lt;/groupId&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;artifactId&gt;</span>servlet-api<span class="nt">&lt;/artifactId&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;version&gt;</span>2.5<span class="nt">&lt;/version&gt;</span>
+</span><span class='line'><span class="nt">&lt;/dependency&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;dependency&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;groupId&gt;</span>javax.servlet<span class="nt">&lt;/groupId&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;artifactId&gt;</span>javax.servlet-api<span class="nt">&lt;/artifactId&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;version&gt;</span>3.0.1<span class="nt">&lt;/version&gt;</span>
+</span><span class='line'><span class="nt">&lt;/dependency&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>JSP</h2>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;p&gt;</span>Counting to three:<span class="nt">&lt;/p&gt;</span>
+</span><span class='line'><span class="err">&lt;</span>% for (int i = 1; i <span class="nt">&lt; 4</span><span class="err">;</span> <span class="err">i++)</span> <span class="err">{</span> <span class="err">%</span><span class="nt">&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;p&gt;</span>This number is <span class="err">&lt;</span>%= i %&gt;.<span class="nt">&lt;/p&gt;</span>
+</span><span class='line'><span class="err">&lt;</span>% } %&gt;
+</span><span class='line'><span class="nt">&lt;p&gt;</span>Done counting.<span class="nt">&lt;/p&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>P.S. во всех заданиях можно использовать Servlet API v. 3 и применять аннотации.</p>
+
+<h2>Практические задания (сделать на занятии)</h2>
+
+<h3>Задание #1</h3>
+
+<p>Написать сервлет, который будет обладать следующим поведением:</p>
+
+<ul>
+<li><code>/hello</code> => &#8220;Hello, World!&#8221;;</li>
+<li><code>/hello?name=Sergey</code> => &#8220;Hello, Sergey!&#8221;;</li>
+<li><code>/hello?count=2</code> => &#8220;Hello, World!\nHello, World!&#8221;;</li>
+<li><code>/hello?name=Sergey&amp;count=2</code> => &#8220;Hello, Sergey!\nHello, Sergey!&#8221;.</li>
+</ul>
+
+
+<h3>Задание #2</h3>
+
+<p>Написать сервлет, который будет обладать следующим поведением:</p>
+
+<ul>
+<li>при первом заходе на страницу <code>/page</code> должны быть отображена html-форма, запрашивающая имя;</li>
+<li>при отправке формы должна отобразиться страница вида &#8220;Hello, <NAME>&#8221;;</li>
+<li>при повторном открытии страницу <code>/page</code> должна отображаться страница &#8220;Hello, <NAME>&#8221;, т.е. имя должно храниться в HTTP Session.</li>
+</ul>
+
+
+<h2>Домашнее задание</h2>
+
+<h3>Задание #1</h3>
+
+<p>Задание состоит из нескольких частей.</p>
+
+<ol>
+<li><p>Реализовать <code>DirectoryServlet</code>, доступный по адресу: <code>/dir?path=c:/temp/</code>.
+Cервлет должен принимать параметр с именем <code>path</code>. В <code>path</code> должен приходить полный путь до каталога. Сервлет должен сгенерировать html- страницу, на которой будут отображены названия всех файлов и папок, отортированные по типу (папка/файл) и лексикографически внутри типов. Названия папок должны быть оформлены в виде ссылок, при нажатии на которые будет осуществляться переход на страницу <code>/dir?path=&lt;subpath&gt;</code>, где в <code>path</code> будет передано название этой папки.</p></li>
+<li><p>Реализовать страницу логина в систему и <code>LoginServlet</code>. Данные о логинах и паролях пользователей должны храниться в текстовом файле <code>users.txt</code> в формате:
+<code>&lt;login&gt; &lt;password&gt; &lt;rootDirectory&gt;</code>. <code>&lt;rootDirectory&gt;</code> - это корненая папка, содержимое которой может видеть пользователь с помощью <code>DirectoryServlet</code>.
+Например, если в <code>users.txt</code> есть запись вида: <code>John TopSecret c:/movies/</code> и пользователь <code>John</code> залогинился в систему с паролем <code>TopSecret</code> и пытается просмотреть содержимое <code>c:/temp/</code> или <code>c:/windows/</code> ему должна отобразиться страница с надписью &#8220;Access denied&#8221;.
+Если пользователь не прошел аутентификацию и пытается зайти на страницу <code>/dir</code>, его должно редиректнуть на страницу логина.</p></li>
+</ol>
+
+
+<p>Логику по проверке аутентификации реализовать в фильтре <code>AuthenticationFilter</code>. Имя пользователя после аутентификации должно сохраняться в сессию, все страницы, кроме страницы авторизации должны содержать ссылку для logout&#8217;a.
+Логику по проверке наличия права смотреть деректорию реализовать в <code>DirectoryPermissionsFilter</code>.</p>
+
+<p>P.S. не забывайте о возможности написать путь до директории в следующем виде: <code>c:/movies/../windows/</code>.</p>
+
+  
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>About Me</h1>
+  <p>
+	My name is Sergey Lukjanov.
+	I am software engineer from Russia.
+	I am interesting in Java, Kotlin, Scala, Groovy, JavaScript, NIO, Concurrency and many other langs/tools/libs.
+  </p>
+</section>
+
+<section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2012/08/08/mountain-lion-and-istat-pro/">Mountain Lion and iStat Pro</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/03/28/ssh-tunneling/">SSH Tunneling</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/02/07/shell-improvements-with-zsh/">Shell improvements with Zsh</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2011/09/29/html5-slides/">HTML5 Slides</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2011/09/29/lock-and-reentrantlock/">Lock and ReentrantLock</a>
+      </li>
+    
+  </ul>
+</section>
+<section>
+<h1>QR-Code<abbr title="The word 'QR Code' is a registered trademark of DENSO WAVE INCORPORATED. It applies only for the word 'QR Code', not for image.">&trade;</abbr></h1>
+<a href="http://slukjanov.name/java-courses-2012/lecture-06-web1-servlets.html"><img src="http://chart.apis.google.com/chart?chs=150x150&cht=qr&chld=|0&chco=165B94&chl=http://slukjanov.name/java-courses-2012/lecture-06-web1-servlets.html" alt="post-qrcode"></a></section>
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2012 - Sergey Lukjanov -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

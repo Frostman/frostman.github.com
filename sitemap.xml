@@ -54,7 +54,7 @@
     </url>
     <url>
         <loc>http://slukjanov.name/java-courses-2012/</loc>
-        <lastmod>2012-11-12T17:09:26+04:00</lastmod>
+        <lastmod>2012-11-14T17:18:35+04:00</lastmod>
     </url>
     <url>
         <loc>http://slukjanov.name/java-courses-2012/lecture-01-jvm.html</loc>
@@ -75,5 +75,9 @@
     <url>
         <loc>http://slukjanov.name/java-courses-2012/lecture-05-jdk8.html</loc>
         <lastmod>2012-11-14T16:12:58+04:00</lastmod>
+    </url>
+    <url>
+        <loc>http://slukjanov.name/java-courses-2012/lecture-06-web1-servlets.html</loc>
+        <lastmod>2012-11-22T10:50:13+04:00</lastmod>
     </url>
 </urlset>
