@@ -5,11 +5,13 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>JC12 - Index - Frostman's blog</title>
+  <title>JC12 - Lecture 06. WEB - Frostman's blog</title>
   <meta name="author" content="Sergey Lukjanov">
 
   
-  <meta name="description" content="JC12 - Index Mirantis Java Course 2012 Author: Sergey Lukjanov (Frostman) Contacts: slukjanov@mirantis.com, me@slukjanov.name. Please, specify jc12 &hellip;">
+  <meta name="description" content="JC12 - Lecture 06. WEB Mirantis Java Course 2012 (back) Lecture 07. DI, IoC, Guice План / тезисы constructors (new);
+factories;
+DI (Dependency &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -18,7 +20,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://slukjanov.name/java-courses-2012/">
+  <link rel="canonical" href="http://slukjanov.name/java-courses-2012/lecture-07-di-guice.html">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -107,38 +109,57 @@
 <article role="article">
   
   <header>
-    <h1 class="entry-title">JC12 - Index</h1>
+    <h1 class="entry-title">JC12 - Lecture 06. WEB</h1>
     
   </header>
   
-  <h2><a href="http://www.mirantis.com">Mirantis</a> Java Course 2012</h2>
+  <h2><a href="http://www.mirantis.com">Mirantis</a> Java Course 2012 (<a href="index.html">back</a>)</h2>
 
-<p>Author: Sergey Lukjanov (<a href="https://github.com/Frostman/" title="Frostman at github.com">Frostman</a>)</p>
+<h2>Lecture 07. DI, IoC, Guice</h2>
 
-<p>Contacts: <a href="mailto:slukjanov@mirantis.com?subject=jc12%20Ivan%20Ivanov">slukjanov@mirantis.com</a>,
- <a href="mailto:me@slukjanov.name?subject=jc12%20Ivan%20Ivanov">me@slukjanov.name</a>.</p>
+<h2>План / тезисы</h2>
 
-<p>Please, specify <code>jc12</code> and your name in subject, for example: <code>jc12 Ivan Ivanov</code>.</p>
-
-<p>Table of contents:</p>
-
-<ol>
-<li><a href="lecture-01-jvm.html">JVM bytecode and instrumentation #1</a></li>
-<li><a href="lecture-02-jvm2-logging.html">JVM bytecode and instrumentation #2 and logging</a></li>
-<li><a href="lecture-03-concurrency.html">Concurrency #1: Basics</a></li>
-<li><a href="lecture-04-concurrency-2.html">Concurrency #2: Advanced</a></li>
-<li><a href="lecture-05-jdk8.html">JDK 8</a></li>
-<li><a href="lecture-06-web1-servlets.html">WEB #1: HTTP, HTML, CSS, Servlet API</a></li>
-<li><a href="lecture-07-di-guice.html">DI, IoC, Guice</a></li>
-<li>WEB #2: JavaScript</li>
-<li>MVC</li>
-<li>DB: JPA, ORM</li>
-<li><p>Play! framework</p></li>
-<li><p>Tools</p></li>
-</ol>
+<ul>
+<li>constructors (<code>new</code>);</li>
+<li>factories;</li>
+<li>DI (Dependency Injection) / IoC (Inverse of Control);</li>
+<li>Google Guice.</li>
+</ul>
 
 
-<p>Some notes for home works: <a href="hw-requirements.html">hw-requirements</a>.</p>
+<h2>Полезная информация</h2>
+
+<p>На официальном сайте Google Guice в <a href="http://code.google.com/p/google-guice/wiki/Motivation?tm=6">wiki</a> находится множество статей про то как пользоваться им, то как он устроен внутри и тд.</p>
+
+<h2>Практические задания (сделать на занятии)</h2>
+
+<h3>Задание #1</h3>
+
+<p>Написать <code>LazyProvider&lt;T&gt;</code>, который принимает <code>Provider&lt;T&gt;</code> в качестве аргумента в конструкторе и вызывает у него <code>get()</code> всего 1 раз при первом обращении.
+Реализация должна быть потоко-безопасной.</p>
+
+<h3>Задание #2</h3>
+
+<p>При помощи <code>guice-servlet</code> реализовать следующее приложение:</p>
+
+<ul>
+<li>фильтр должен писать по <code>/hello</code> в респонз &#8220;Hello from filter&#8221;;</li>
+<li>сервлет должен писать по <code>/hello</code> в респонз &#8220;Hello from Servlet&#8221;;</li>
+<li>т.о. мы должны увидеть страницу с двумя приветствиями при обращении к <code>/hello</code>.</li>
+</ul>
+
+
+<h2>Домашнее задание</h2>
+
+<h3>Задание #1</h3>
+
+<p>Переделать предыдущее домашнее задание максимально используя Guice.</p>
+
+<p>Например, помимо сервлетов и фильтров, у вас должны быть классы отвечающие за получение логинов-паролей пользователей и проверку способности пользователя просматривать директорию. Эти классы так же должны инжектиться с помощью Guice.</p>
+
+<h3>Задание #2</h3>
+
+<p>По <a href="http://code.google.com/p/google-guice/wiki/CustomInjections">ссылке</a> описано как сделать инжектинг логгера log4j. Необходимо разобраться в работе этого механизма и по аналогии написать инжектинг для slf4j логгера.</p>
 
   
 </article>
@@ -184,7 +205,7 @@
 </section>
 <section>
 <h1>QR-Code<abbr title="The word 'QR Code' is a registered trademark of DENSO WAVE INCORPORATED. It applies only for the word 'QR Code', not for image.">&trade;</abbr></h1>
-<a href="http://slukjanov.name/java-courses-2012/index.html"><img src="http://chart.apis.google.com/chart?chs=150x150&cht=qr&chld=|0&chco=165B94&chl=http://slukjanov.name/java-courses-2012/index.html" alt="post-qrcode"></a></section>
+<a href="http://slukjanov.name/java-courses-2012/lecture-07-di-guice.html"><img src="http://chart.apis.google.com/chart?chs=150x150&cht=qr&chld=|0&chco=165B94&chl=http://slukjanov.name/java-courses-2012/lecture-07-di-guice.html" alt="post-qrcode"></a></section>
 
   
 </aside>
