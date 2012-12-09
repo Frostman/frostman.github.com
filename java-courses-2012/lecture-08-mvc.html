@@ -5,11 +5,12 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>JC12 - Index - Frostman's blog</title>
+  <title>JC12 - Lecture 08. MVC - Frostman's blog</title>
   <meta name="author" content="Sergey Lukjanov">
 
   
-  <meta name="description" content="JC12 - Index Mirantis Java Course 2012 Author: Sergey Lukjanov (Frostman) Contacts: slukjanov@mirantis.com, me@slukjanov.name. Please, specify jc12 &hellip;">
+  <meta name="description" content="JC12 - Lecture 08. MVC Mirantis Java Course 2012 (back) Lecture 08. MVC План / тезисы MVC pattern;
+handmade MVC. Handmade MVC Практическим заданием &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -18,7 +19,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://slukjanov.name/java-courses-2012/">
+  <link rel="canonical" href="http://slukjanov.name/java-courses-2012/lecture-08-mvc.html">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -107,37 +108,113 @@
 <article role="article">
   
   <header>
-    <h1 class="entry-title">JC12 - Index</h1>
+    <h1 class="entry-title">JC12 - Lecture 08. MVC</h1>
     
   </header>
   
-  <h2><a href="http://www.mirantis.com">Mirantis</a> Java Course 2012</h2>
+  <h2><a href="http://www.mirantis.com">Mirantis</a> Java Course 2012 (<a href="index.html">back</a>)</h2>
 
-<p>Author: Sergey Lukjanov (<a href="https://github.com/Frostman/" title="Frostman at github.com">Frostman</a>)</p>
+<h2>Lecture 08. MVC</h2>
 
-<p>Contacts: <a href="mailto:slukjanov@mirantis.com?subject=jc12%20Ivan%20Ivanov">slukjanov@mirantis.com</a>,
- <a href="mailto:me@slukjanov.name?subject=jc12%20Ivan%20Ivanov">me@slukjanov.name</a>.</p>
+<h2>План / тезисы</h2>
 
-<p>Please, specify <code>jc12</code> and your name in subject, for example: <code>jc12 Ivan Ivanov</code>.</p>
-
-<p>Table of contents:</p>
-
-<ol>
-<li><a href="lecture-01-jvm.html">JVM bytecode and instrumentation #1</a></li>
-<li><a href="lecture-02-jvm2-logging.html">JVM bytecode and instrumentation #2 and logging</a></li>
-<li><a href="lecture-03-concurrency.html">Concurrency #1: Basics</a></li>
-<li><a href="lecture-04-concurrency-2.html">Concurrency #2: Advanced</a></li>
-<li><a href="lecture-05-jdk8.html">JDK 8</a></li>
-<li><a href="lecture-06-web1-servlets.html">WEB #1: HTTP, HTML, CSS, Servlet API</a></li>
-<li><a href="lecture-07-di-guice.html">DI, IoC, Guice</a></li>
-<li><a href="lecture-08-mvc.html">MVC</a></li>
-<li>DB: JPA, ORM</li>
-<li><p>Play! framework</p></li>
-<li><p>Tools</p></li>
-</ol>
+<ul>
+<li>MVC pattern;</li>
+<li>handmade MVC.</li>
+</ul>
 
 
-<p>Some notes for home works: <a href="hw-requirements.html">hw-requirements</a>.</p>
+<h2>Handmade MVC</h2>
+
+<p>Практическим заданием на это занятие, а так же домашним заданием является написание простейшего MVC-фреймворка с использованием следующих технологий:</p>
+
+<ul>
+<li>Servlet API;</li>
+<li>Google Guice;</li>
+<li>template engine (Velocity, FreeMarker);</li>
+<li>json (Jackson JSON, Gson);</li>
+<li>etc.</li>
+</ul>
+
+
+<p>Далее будет пример использования этого фреймворка (по сути его API), какие то части из этого уже были реализованны на занятии, остальные буду реалищовываться завтра на занятии и в последующей домашней работе.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>public class TestController extends Controller {
+</span><span class='line'>      @Bind(“/index”)
+</span><span class='line'>      public void index(@Param(“name”) String name) {
+</span><span class='line'>          String hw = “Hello, ” + name;
+</span><span class='line'>          renderString(hw);
+</span><span class='line'>      }
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>public interface Result {
+</span><span class='line'>    void render(HttpServletRequest req, HttpServletResponse resp);
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<ul>
+<li><code>@Bind</code> - какой url обрабатывать данному методу;</li>
+<li><code>@Param</code> - имя http-параметра, который будет подставлен в эту переменную, должны поддерживаться все примитивные типы и их обертки;</li>
+<li><code>render***</code> - методы, которые передают данные во <code>View</code> по средством передачи результата в объектах реализующих <code>Result</code></li>
+</ul>
+
+
+<p>Пример реализации интерфейса <code>Result</code></p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>public class StringResult implements Result {
+</span><span class='line'>    private final String str;
+</span><span class='line'>
+</span><span class='line'>    public StringResult(String str) {
+</span><span class='line'>        this.str = str;
+</span><span class='line'>    }
+</span><span class='line'>
+</span><span class='line'>    @Override
+</span><span class='line'>    public void render(HttpServletRequest req, HttpServletResponse resp) {
+</span><span class='line'>        try {
+</span><span class='line'>            resp.getWriter().println(str);
+</span><span class='line'>        } catch (IOException e) {
+</span><span class='line'>            throw new RuntimeException(e);
+</span><span class='line'>        }
+</span><span class='line'>    }
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Необходимо реализовать следующие возможности:</p>
+
+<ul>
+<li><code>renderTemplate(templateName, model)</code>, <code>renderJson(mapOrObject)</code>;</li>
+<li><code>@SessionParam</code>, <code>@JsonParam</code>.</li>
+</ul>
+
 
   
 </article>
@@ -183,7 +260,7 @@
 </section>
 <section>
 <h1>QR-Code<abbr title="The word 'QR Code' is a registered trademark of DENSO WAVE INCORPORATED. It applies only for the word 'QR Code', not for image.">&trade;</abbr></h1>
-<a href="http://slukjanov.name/java-courses-2012/index.html"><img src="http://chart.apis.google.com/chart?chs=150x150&cht=qr&chld=|0&chco=165B94&chl=http://slukjanov.name/java-courses-2012/index.html" alt="post-qrcode"></a></section>
+<a href="http://slukjanov.name/java-courses-2012/lecture-08-mvc.html"><img src="http://chart.apis.google.com/chart?chs=150x150&cht=qr&chld=|0&chco=165B94&chl=http://slukjanov.name/java-courses-2012/lecture-08-mvc.html" alt="post-qrcode"></a></section>
 
   
 </aside>
