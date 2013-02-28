@@ -1,6 +1,6 @@
 ---                                                                                                                     
 layout: page                                                                                                            
-title: JC12 - Lecture 06. WEB #1: HTTP, HTML, CSS, Servlet API
+title: JC12 - Lecture 07. WEB #1: HTTP, HTML, CSS, Servlet API
 
 comments: false                                                                                                         
 sharing: false                                                                                                          
@@ -197,7 +197,7 @@ web.xml теперь необязателен, сервлет-контейнер
 
 ### Dynamic servlet loading
 
-```java
+```
 @WebListener
 public class TestListener implements ServletContextListener {
     public void contextInitialized(ServletContextEvent servletContextEvent) {
@@ -228,7 +228,7 @@ mvn archetype:generate -DarchetypeArtifactId=maven-archetype-webapp
 
 Dependencies:
 
-```xml
+```
 <dependency>
     <groupId>javax.servlet</groupId>
     <artifactId>servlet-api</artifactId>
@@ -236,7 +236,7 @@ Dependencies:
 </dependency>
 ```
 
-```xml
+```
 <dependency>
     <groupId>javax.servlet</groupId>
     <artifactId>javax.servlet-api</artifactId>
