@@ -19,5 +19,6 @@ Please, specify `jc13` and your name in subject, for example: `jc12 Ivan Ivanov`
 Table of contents:
 
 1. [Java intro](lecture-01-java-intro.html)
+2. [OOP](lecture-02-oop.html)
 
 Some notes for home works: [hw-requirements](hw-requirements.html).
