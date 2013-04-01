@@ -5,11 +5,11 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>JC13 - Index - Frostman's blog</title>
+  <title>JC13 - Lecture 04. Reflection - Frostman's blog</title>
   <meta name="author" content="Sergey Lukjanov">
 
   
-  <meta name="description" content="JC13 - Index Mirantis Java Course 2013 Author: Sergey Lukjanov (Frostman) Language: Russian Contacts: slukjanov@mirantis.com, me@slukjanov.name. &hellip;">
+  <meta name="description" content="JC13 - Lecture 04. Reflection Mirantis Java Сourse 2013 (back) Lecture 04. Reflection Java Class Loaders Практическое задание (на занятии) #1 / &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -18,7 +18,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://slukjanov.name/java-courses-2013/">
+  <link rel="canonical" href="http://slukjanov.name/java-courses-2013/lecture-04-reflection.html">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -107,32 +107,35 @@
 <article role="article">
   
   <header>
-    <h1 class="entry-title">JC13 - Index</h1>
+    <h1 class="entry-title">JC13 - Lecture 04. Reflection</h1>
     
   </header>
   
-  <h2><a href="http://www.mirantis.com">Mirantis</a> Java Course 2013</h2>
+  <h2><a href="http://www.mirantis.com">Mirantis</a> Java Сourse 2013 (<a href="index.html">back</a>)</h2>
 
-<p>Author: Sergey Lukjanov (<a href="https://github.com/Frostman/" title="Frostman at github.com">Frostman</a>)</p>
+<h2>Lecture 04. Reflection</h2>
 
-<p>Language: Russian</p>
+<h2>Java Class Loaders</h2>
 
-<p>Contacts: <a href="mailto:slukjanov@mirantis.com?subject=jc13%20Ivan%20Ivanov">slukjanov@mirantis.com</a>,
- <a href="mailto:me@slukjanov.name?subject=jc13%20Ivan%20Ivanov">me@slukjanov.name</a>.</p>
+<h2>Практическое задание (на занятии) #1 / Домашнее задание</h2>
 
-<p>Please, specify <code>jc13</code> and your name in subject, for example: <code>jc12 Ivan Ivanov</code>.</p>
+<p>Необходимо реализовать класс <code>BeanUtil</code> со следующим функционалом (статическими методами):</p>
 
-<p>Table of contents:</p>
-
-<ol>
-<li><a href="lecture-01-java-intro.html">Java intro</a></li>
-<li><a href="lecture-02-oop.html">OOP</a></li>
-<li><a href="lecture-03-class-loaders.html">Class loaders</a></li>
-<li><a href="lecture-04-reflection.html">Reflection</a></li>
-</ol>
+<ul>
+<li><code>properties(Object bean)</code> - список всех property указанного <code>bean</code>, например: <code>["a", "b", "c", "d"]</code>;</li>
+<li><code>get(Object bean, String props)</code> - получение значения property по имени с поддержкой вложенности, т.е. <code>get(bean, "a/b/c/d")</code> должен превратиться в вызов <code>bean.getA().getB().getC().getD()</code>;</li>
+<li><code>set(Object bean, String props, Object value)</code> - аналогично <code>get</code> выставляет значение, т.е. <code>set(bean, "a/b/c/d", "new value!")</code> должен превратиться в вызов <code>bean.getA().getB().getC().setD("new value!")</code></li>
+<li><code>type(Object bean, String props)</code> - аналогично <code>get</code>, но возвращает только тип поля, например <code>type(bean, "a/b/c/d")</code> вернет <code>class java.lang.String</code>.</li>
+</ul>
 
 
-<p>Some notes for home works: <a href="hw-requirements.html">hw-requirements</a>.</p>
+<p>Некоторые определения:</p>
+
+<ul>
+<li><code>Java Bean</code> - класс с private полями, как минимум конструктором по-умолчанию и геттерами-сеттерами;</li>
+<li><code>property</code> - это нечто для чего есть геттер и сеттер, т.е. если есть getFoo() и setFoo(), то есть property <code>foo</code>.</li>
+</ul>
+
 
   
 </article>
@@ -178,7 +181,7 @@
 </section>
 <section>
 <h1>QR-Code<abbr title="The word 'QR Code' is a registered trademark of DENSO WAVE INCORPORATED. It applies only for the word 'QR Code', not for image.">&trade;</abbr></h1>
-<a href="http://slukjanov.name/java-courses-2013/index.html"><img src="http://chart.apis.google.com/chart?chs=150x150&cht=qr&chld=|0&chco=165B94&chl=http://slukjanov.name/java-courses-2013/index.html" alt="post-qrcode"></a></section>
+<a href="http://slukjanov.name/java-courses-2013/lecture-04-reflection.html"><img src="http://chart.apis.google.com/chart?chs=150x150&cht=qr&chld=|0&chco=165B94&chl=http://slukjanov.name/java-courses-2013/lecture-04-reflection.html" alt="post-qrcode"></a></section>
 
   
 </aside>
