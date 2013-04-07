@@ -106,7 +106,7 @@
     </url>
     <url>
         <loc>http://slukjanov.name/java-courses-2013/</loc>
-        <lastmod>2013-04-01T19:10:40+04:00</lastmod>
+        <lastmod>2013-04-07T15:11:11+04:00</lastmod>
     </url>
     <url>
         <loc>http://slukjanov.name/java-courses-2013/lecture-01-java-intro.html</loc>
@@ -123,5 +123,9 @@
     <url>
         <loc>http://slukjanov.name/java-courses-2013/lecture-04-reflection.html</loc>
         <lastmod>2013-04-01T19:20:13+04:00</lastmod>
+    </url>
+    <url>
+        <loc>http://slukjanov.name/java-courses-2013/lecture-05-di.html</loc>
+        <lastmod>2013-04-07T16:10:18+04:00</lastmod>
     </url>
 </urlset>
