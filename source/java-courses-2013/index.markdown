@@ -20,5 +20,9 @@ Table of contents:
 
 1. [Java intro](lecture-01-java-intro.html)
 2. [OOP](lecture-02-oop.html)
+3. [Class loaders](lecture-03-class-loaders.html)
+4. [Reflection](lecture-04-reflection.html)
+5. [DI & Annotations](lecture-05-di.html)
+6. [XML parsing/generation](lecture-06-xml.html)
 
 Some notes for home works: [hw-requirements](hw-requirements.html).

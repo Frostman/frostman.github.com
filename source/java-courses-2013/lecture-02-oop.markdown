@@ -1,13 +1,13 @@
 ---                                                                                                                     
 layout: page                                                                                                            
-title: JC13 - Lecture 01. Java Intro                                                                                                                 
+title: JC13 - Lecture 02. OOP 
 comments: false                                                                                                         
 sharing: false                                                                                                          
 sidebar: collapse
 footer: false                                                                                                           
 ---
 ## [Mirantis](http://www.mirantis.com) Java Сourse 2013 ([back](index.html))
-## Lecture 01. Java Intro
+## Lecture 02. OOP
 
 Основные принципе ООП.
 
