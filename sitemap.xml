@@ -50,7 +50,7 @@
     </url>
     <url>
         <loc>http://slukjanov.name/information-retrieval/</loc>
-        <lastmod>2013-03-11T08:41:16+04:00</lastmod>
+        <lastmod>2013-04-20T06:59:28+04:00</lastmod>
     </url>
     <url>
         <loc>http://slukjanov.name/information-retrieval/lecture-01-ir-intro.html</loc>
@@ -59,6 +59,10 @@
     <url>
         <loc>http://slukjanov.name/information-retrieval/lecture-02-boolean-search.html</loc>
         <lastmod>2013-03-11T08:38:02+04:00</lastmod>
+    </url>
+    <url>
+        <loc>http://slukjanov.name/information-retrieval/lecture-03-bool-extended.html</loc>
+        <lastmod>2013-04-20T06:58:42+04:00</lastmod>
     </url>
     <url>
         <loc>http://slukjanov.name/java-courses-2012/hw-requirements.html</loc>
