@@ -5,11 +5,11 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>JC13 - Index - Frostman's blog</title>
+  <title>JC13 - Lecture 07. Maven & Unit tests - Frostman's blog</title>
   <meta name="author" content="Sergey Lukjanov">
 
   
-  <meta name="description" content="JC13 - Index Mirantis Java Course 2013 Author: Sergey Lukjanov (Frostman) Language: Russian Contacts: slukjanov@mirantis.com, me@slukjanov.name. &hellip;">
+  <meta name="description" content="JC13 - Lecture 07. Maven & Unit Tests Mirantis Java Сourse 2013 (back) Lecture 07. Maven &amp; Unit tests Maven Документация, инструкции по &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -18,7 +18,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://slukjanov.name/java-courses-2013/">
+  <link rel="canonical" href="http://slukjanov.name/java-courses-2013/lecture-07-mvn-utests.html">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -107,35 +107,38 @@
 <article role="article">
   
   <header>
-    <h1 class="entry-title">JC13 - Index</h1>
+    <h1 class="entry-title">JC13 - Lecture 07. Maven & Unit Tests</h1>
     
   </header>
   
-  <h2><a href="http://www.mirantis.com">Mirantis</a> Java Course 2013</h2>
+  <h2><a href="http://www.mirantis.com">Mirantis</a> Java Сourse 2013 (<a href="index.html">back</a>)</h2>
 
-<p>Author: Sergey Lukjanov (<a href="https://github.com/Frostman/" title="Frostman at github.com">Frostman</a>)</p>
+<h2>Lecture 07. Maven &amp; Unit tests</h2>
 
-<p>Language: Russian</p>
+<h3>Maven</h3>
 
-<p>Contacts: <a href="mailto:slukjanov@mirantis.com?subject=jc13%20Ivan%20Ivanov">slukjanov@mirantis.com</a>,
- <a href="mailto:me@slukjanov.name?subject=jc13%20Ivan%20Ivanov">me@slukjanov.name</a>.</p>
+<p>Документация, инструкции по установке - http://maven.apache.org</p>
 
-<p>Please, specify <code>jc13</code> and your name in subject, for example: <code>jc12 Ivan Ivanov</code>.</p>
+<p>Основные goals:</p>
 
-<p>Table of contents:</p>
-
-<ol>
-<li><a href="lecture-01-java-intro.html">Java intro</a></li>
-<li><a href="lecture-02-oop.html">OOP</a></li>
-<li><a href="lecture-03-class-loaders.html">Class loaders</a></li>
-<li><a href="lecture-04-reflection.html">Reflection</a></li>
-<li><a href="lecture-05-di.html">DI &amp; Annotations</a></li>
-<li><a href="lecture-06-xml.html">XML parsing/generation</a></li>
-<li><a href="lecture-07-mvn-utests.html">Maven &amp; Unit tests</a></li>
-</ol>
+<ul>
+<li>clean - очистка временных файлов</li>
+<li>compile - компиляция исходных кодов</li>
+<li>test - компиляция исходных кодов и запуск тестов</li>
+<li>package - сборка jar файла со скомпилированными исходниками</li>
+</ul>
 
 
-<p>Some notes for home works: <a href="hw-requirements.html">hw-requirements</a>.</p>
+<p>Цели можно комбинировать, например - <code>mvn clean package</code>.</p>
+
+<p>Для создания чистого мавен проекта можно использовать команду <code>mvn archetype:generate</code>.</p>
+
+<h2>Домашнее задание #1</h2>
+
+<p>Возьмите свое решение задачи номер 256 с acm.sgu.ru - http://acm.sgu.ru/univer/problem.php?contest=0&amp;problem=256
+и оформите его в виде Maven проекта таким образом чтобы у вас был некий метод <code>convertToMetre(String)</code>,
+который решал бы задачу для одной строки. Так же необходимо написать некоторое количество unit test&#8217;ов, которые
+полностью покрывали бы все возможные случаи.</p>
 
   
 </article>
@@ -181,7 +184,7 @@
 </section>
 <section>
 <h1>QR-Code<abbr title="The word 'QR Code' is a registered trademark of DENSO WAVE INCORPORATED. It applies only for the word 'QR Code', not for image.">&trade;</abbr></h1>
-<a href="http://slukjanov.name/java-courses-2013/index.html"><img src="http://chart.apis.google.com/chart?chs=150x150&cht=qr&chld=|0&chco=165B94&chl=http://slukjanov.name/java-courses-2013/index.html" alt="post-qrcode"></a></section>
+<a href="http://slukjanov.name/java-courses-2013/lecture-07-mvn-utests.html"><img src="http://chart.apis.google.com/chart?chs=150x150&cht=qr&chld=|0&chco=165B94&chl=http://slukjanov.name/java-courses-2013/lecture-07-mvn-utests.html" alt="post-qrcode"></a></section>
 
   
 </aside>
