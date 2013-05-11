@@ -5,11 +5,11 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Information Retrieval - Index - Frostman's blog</title>
+  <title>Frostman's blog</title>
   <meta name="author" content="Sergey Lukjanov">
 
   
-  <meta name="description" content="Information Retrieval - Index Information Retrieval 2013 Author: Sergey Lukjanov Language: Russian Contacts: slukjanov@mirantis.com, me@slukjanov. &hellip;">
+  <meta name="description" content="IR 2013 (back) Lecture 08. Problems Итоговое задание по практике / допуск к экзамену Необходимо переписать задание из первой части практики с &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -18,7 +18,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://slukjanov.name/information-retrieval/">
+  <link rel="canonical" href="http://slukjanov.name/information-retrieval/lecture-08-problems.html">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -106,32 +106,46 @@
       <div>
 <article role="article">
   
-  <header>
-    <h1 class="entry-title">Information Retrieval - Index</h1>
-    
-  </header>
-  
-  <h2>Information Retrieval 2013</h2>
+  <h2>IR 2013 (<a href="index.html">back</a>)</h2>
 
-<p>Author: Sergey Lukjanov</p>
+<h2>Lecture 08. Problems</h2>
 
-<p>Language: Russian</p>
+<h3>Итоговое задание по практике / допуск к экзамену</h3>
 
-<p>Contacts: <a href="mailto:slukjanov@mirantis.com?subject=ir%20Ivan%20Ivanov">slukjanov@mirantis.com</a>,
- <a href="mailto:me@slukjanov.name?subject=ir%20Ivan%20Ivanov">me@slukjanov.name</a>.</p>
+<p>Необходимо переписать задание из первой части практики с использованием Lucene.</p>
 
-<p>Please, specify <code>ir</code> and your name in subject, for example: <code>ir Ivan Ivanov</code>.</p>
+<p>Функции <code>save</code> и <code>load</code> нужно заменить на функцию <code>init</code>, которая должна задавать путь до файла с индексом.</p>
 
-<p> Table of contents:</p>
+<p>Список возможностей, которые обязательно должны быть использованны в программе:</p>
+
+<ul>
+<li>Lucene Query Language</li>
+<li>English(Russian)Analyzer</li>
+<li>поддержка txt и pdf файлов</li>
+<li>Highlighter</li>
+</ul>
+
+
+<h3>Задание на автомат</h3>
+
+<p>Необходимо реализовать простейший веб-сайт со слудующим функционалом:</p>
 
 <ol>
-<li><a href="lecture-01-ir-intro.html">Information Retrieval intro</a></li>
-<li><a href="lecture-02-boolean-search.html">Boolean Search</a></li>
-<li><a href="lecture-03-bool-extended.html">Boolean Search Extended</a></li>
-<li><a href="lecture-07-lucene-ext.html">Lucene extended</a></li>
-<li><a href="lecture-08-problems.html">Problems</a></li>
+<li>поиск по проиндексированным документам (поисковая строка) с использованием Lucene Query Language, но так же должны поддерживаться запросы вида &#8220;hello world&#8221; (используйте <code>MultiFieldAnalyzerWrapper</code> и <code>.setDefaultOperation</code>)</li>
+<li>&#8220;Did you mean _____?&#8221; подсказка</li>
+<li>подсветка искомых слов в результатах</li>
+<li>возможность загрузить файл на сервер через веб-страницу для индексации</li>
+<li>поддержка .txt, .pdf (например, PDFBox), .doc/.docx (например, Apache POI)</li>
+<li>в поисковых результатах должны быть ссылки на скачивание документов</li>
+<li>при загрузке должна быть возможность указать название документа, автора, описание и непосредственно сам файл, по всем этим полям должен производиться поиск.</li>
 </ol>
 
+
+<p>Так же вы можете предлагать свои идеи о задании на автомат.</p>
+
+<p>Если вы сделаете задание на автомат, то задание на допуск необязательно.</p>
+
+<p>Последний день сдачи задания на автомат - консультация перед экзаменом.</p>
 
   
 </article>
@@ -177,7 +191,7 @@
 </section>
 <section>
 <h1>QR-Code<abbr title="The word 'QR Code' is a registered trademark of DENSO WAVE INCORPORATED. It applies only for the word 'QR Code', not for image.">&trade;</abbr></h1>
-<a href="http://slukjanov.name/information-retrieval/index.html"><img src="http://chart.apis.google.com/chart?chs=150x150&cht=qr&chld=|0&chco=165B94&chl=http://slukjanov.name/information-retrieval/index.html" alt="post-qrcode"></a></section>
+<a href="http://slukjanov.name/information-retrieval/lecture-08-problems.html"><img src="http://chart.apis.google.com/chart?chs=150x150&cht=qr&chld=|0&chco=165B94&chl=http://slukjanov.name/information-retrieval/lecture-08-problems.html" alt="post-qrcode"></a></section>
 
   
 </aside>
