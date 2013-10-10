@@ -1,13 +1,13 @@
 ---                                                                                                                     
 layout: page                                                                                                            
-title: JC12 - Lecture 03. Concurrency basics                                                                                                                  
+title: JC13 - Lecture 08. Concurrency basics                                                                                                                  
 comments: false                                                                                                         
 sharing: false                                                                                                          
 sidebar: collapse
 footer: false                                                                                                           
 ---
-## [Mirantis](http://www.mirantis.com) Java Course 2012 ([back](index.html))
-## Lecture 03. Concurrency basics
+## [Mirantis](http://www.mirantis.com) Java Course 2013 ([back](index.html))
+## Lecture 08. Concurrency basics
 
 ## План / тезисы
 
@@ -34,7 +34,6 @@ footer: false
 * синтаксические конструкции;
 * четко определённая семантика;
 * пакет `java.util.concurent`;
-* спецификация Java Memory Model, которая описывает, при каких условиях поток увидит изменения сделанные другим потоком.
 
 ### Работа с потоками
 
@@ -55,38 +54,61 @@ footer: false
 * Deadlocks;
 * разница `StringBuffer` / `StringBuilder`, `Vector` / `ArrayList`.
 
-## Практической задание (сделать на занятии)
+
+## Практической задание #1 (сделать на занятии)
  
-Необходимо реализовать "семафор" с использованием механизма wait-notify.
+ Необходимо реализовать "mutex" с использованием механизма wait-notify.
 
-```java
-public class Semaphore {
-    public Semaphore(int resourceNumber) {...}
+ ```java
+ public class Mutex {
+     public Mutex() {...}
 
-    public void acquire() throws java.lang.InterruptedException {...}
-    public void acquire(int number) throws java.lang.InterruptedException {...} 
-    public boolean tryAcquire() {...}
-    public boolean tryAcquire(int number) {...} 
-    public boolean tryAcquire(long timeToWait, java.util.concurrent.TimeUnit timeUnit) throws java.lang.InterruptedException {...}
-    public boolean tryAcquire(int number, long timeToWait, java.util.concurrent.TimeUnit timeUnit) throws java.lang.InterruptedException {...}
+     public void acquire() throws java.lang.InterruptedException {...}
+     public boolean tryAcquire() {...}
+     public void release() throws InterruptedException {...}
+                         
+ }
+ ```
 
-    public void release() throws InterruptedException {...}
-    public void release(int number) throws InterruptedException {...}
-}
-```
-
-Конструктор принимает на вход число доступных ресурсов, которые можно будет занимать.
-Метод `acquire` должен занимать 1 ресурс и если свободного ресурса нет, то ждать его появления.
-Метод `acquire(int)` должен занимать N ресурсов, занимая их по возможности и ожидая недостоющих ресурсов.
-Методы `tryAcquire` могут не смочь занять ресурсы, в таком случае они должны вернуть false и не занять никаких ресурсов.
-`TimeUnit` позволяет указать в каких еденицах указано время (секунды, минуты и тд).
-
-Методы `release` должны освобождать 1 или N ресурсов. Не обязательно делать wait в том случае если при их освобождение будет превышаться число доступных
-конструкторов указанных в конструкторе.
-
+ Метод `acquire` должен блокировать mutex если он свободен, а если он уже заболкирован, то ждать его освобождения.
+ Метод `tryAcquire` должен блокировать mutex если он свободен, возвращая `true` или возвращать `false` если он уже заболкирован.
 ## Домашнее задание
 
+### Практической задание #2 (сделать на занятии)
+
+Ваша задача заключается в создании двух реализаций интерфейса `Task`:
+
+Первая реализация - `SimpleTask` должна иметь следующий вид:
+
+ ```java
+ import java.util.concurrent.Callable;
+
+ public final class SimpleTask<T> {
+     // ...
+     public SimpleTask(Callable<? extends T> callable) {
+     // ...
+     }
+
+     public T get() throws MyException {
+     // ...
+     }
+ }
+```
+
+Метод `get()` должен возвращать результат выполнения `callable` или бросать обернутое исключение,
+произошедшее во время выполнения. Если при вызове get() результат уже просчитан, то он должен вернуться сразу. 
+Вычисление значения (выполнение `callable`) должно происходить только один раз - в конструкторе.
+`Callable` похож на `Runnuble`, но результатом его работы является объект (а не `void`). 
+
+Далее необходимо реализовать лениво вычисляющийся `LazyTask`, имеющий такой же вид как и `SimpleTask`,
+но вычисление значения (выполнение `callable`) должно происходить только при первом обращении к `get()`
+(в потоке который совершил первый вызов и только один раз).
+   
+
+
 *Note.* Все решения должны быть thread-safe.
+
+*Note.* Решения нужно присылать на nkonovalov@mirantis.com
 
 ### Задание #1 
 
@@ -94,7 +116,7 @@ public class Semaphore {
 
 ### Задание #2
 
-Первое задание теоретическое. Ответ на каждый вопрос должен занимать 1-3 предложения. 
+Второе задание теоретическое. Ответ на каждый вопрос должен занимать 1-3 предложения. 
 
 1. Как получить ссылку на текущий поток?
 2. Зачем нужно ключевое слово `synchronized`? На что его можно повесить (поле, метод, класс, конструктор и тд)?
@@ -107,56 +129,13 @@ public class Semaphore {
 
 ### Задание #3 
 
-Ваша задача заключается в создании двух реализаций интерфейса `Task`:
-
-```java
-public interface Task<T> {
-    T get() throws MyException;
-}
-```
-
-Замените название `MyException` на более подходящее. В это исключение должны оборачиваться исключения 
-(в любой из реализаций интерфейса `Task`), возникшие во время исполнения задачи, 
-и оно должно быть выброшено всем потокам, которые вызывают `get()`.
-
-Первая реализация - `SimpleTask` должна иметь следующий вид:
-
-```java
-import java.util.concurrent.Callable;
-
-public final class SimpleTask<T> implements Task<T> {
-    // ...
-
-    public SimpleTask(Callable<? extends T> callable) {
-        // ...
-    }
-    
-    public T get() throws MyException {
-        // ...
-    }
-}
-```
-
-Метод `get()` должен возвращать результат выполнения `callable` или бросать обернутое исключение,
-произошедшее во время выполнения. Если при вызове get() результат уже просчитан, то он должен вернуться сразу
-(даже без задержек на вход в синхронизированную область, справедливо для всех реализаций). 
-Вычисление значения (выполнение `callable`) должно происходить только один раз - в конструкторе.
-`Callable` похож на `Runnuble`, но результатом его работы является объект (а не `void`). 
-
-Далее необходимо реализовать лениво вычисляющийся `LazyTask`, имеющий такой же вид как и `SimpleTask`,
-но вычисление значения (выполнение `callable`) должно происходить только при первом обращении к `get()`
-(в потоке который совершил первый вызов и только один раз).
-   
-
-### Задание #4 
-
 Ваша задача реализовать интерфейс `ExecutionManager`: 
 
-```java
-public interface ExecutionManager {
-    Context execute(Runnable callback, Runnable... tasks);
-}
-```
+ ```java
+ public interface ExecutionManager {
+     Context execute(Runnable callback, Runnable... tasks);
+ }
+ ```
 
 Метод `execute()` принимает массив tasks, это задания которые `ExecutionManager` должен выполнять параллельно
 (в вашей реализации это должно происходить в своем пуле потоков). 
@@ -165,15 +144,15 @@ public interface ExecutionManager {
 Метод `execute()` – это неблокирующий метод, который сразу возвращает объект `Context`.
 `Context` - это интерфейс следующего вида: 
 
-```java
-public interface Context {
-    int getCompletedTaskCount(); 
-    int getFailedTaskCount(); 
-    int getInterruptedTaskCount(); 
-    void interrupt(); 
-    boolean isFinished(); 
-}
-```
+ ```java
+ public interface Context {
+     int getCompletedTaskCount(); 
+     int getFailedTaskCount(); 
+     int getInterruptedTaskCount(); 
+     void interrupt(); 
+     boolean isFinished(); 
+ }
+ ```
 Описание поведения методов:
 
 * `getCompletedTaskCount()` должен возвращать количество заданий, которые на текущий момент успешно выполнились;
@@ -181,4 +160,3 @@ public interface Context {
 * `interrupt()` должен отменять выполнения заданий, которые еще не начали выполняться;
 * `getInterruptedTaskCount()` должен возвращать количество заданий, которые не были выполены из-за отмены (вызовом предыдущего метода); 
 * `isFinished()` должен возвращать `true`, если все таски были выполнены или отменены, `false` в противном случае.  
-
