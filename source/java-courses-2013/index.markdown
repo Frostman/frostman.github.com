@@ -25,7 +25,6 @@ Table of contents:
 5. [DI & Annotations](lecture-05-di.html)
 6. [XML parsing/generation](lecture-06-xml.html)
 7. [Maven & Unit tests](lecture-07-mvn-utests.html)
-
 8. [Concurrency Basics](lecture-08-concurrency.html)
 
 Some notes for home works: [hw-requirements](hw-requirements.html).
